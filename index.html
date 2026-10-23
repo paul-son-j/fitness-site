@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome — Paulson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Figtree:wght@400;500&display=swap">
+<style>
+  :root { --bg:#eef1ef; --ink:#15211d; --muted:#5d6b66; --accent:#e2562b; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f1513; --ink:#e7eeeb; --muted:#93a29c; --accent:#ff7448; } }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 17px/1.6 "Figtree", system-ui, sans-serif;
+         display: grid; place-items: center; padding: 24px; }
+  main { max-width: 34rem; }
+  p.kicker { font: 600 0.9rem "Barlow Condensed", sans-serif; letter-spacing: .12em;
+             text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+  h1 { font: 700 clamp(2.6rem, 11vw, 4.5rem)/1 "Barlow Condensed", "Arial Narrow", sans-serif; margin: 0 0 16px; }
+  p { color: var(--muted); margin: 0; }
+  footer { margin-top: 32px; font-size: .85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Daily fitness journal</p>
+  <h1>Welcome, I'm Paulson.</h1>
+  <p>This is where I'll share my daily training: what I did, why I did it, and what it's getting me. Full log coming soon.</p>
+  <footer>Test page · hosted on Vercel</footer>
+</main>
+</body>
+</html>
