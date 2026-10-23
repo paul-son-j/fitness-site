@@ -10,37 +10,84 @@
 <style>
   /* Theme: bright sea adventure. Sky blue, straw yellow, red, parchment */
   :root {
-    --sky:#3BB4EA; --sea:#0B5A9C; --deep:#073763;
+    --sky:#3BB4EA; --sky-low:#8FDBF7; --sea:#0B5A9C; --deep:#073763;
     --straw:#FFC928; --red:#D7263D; --paper:#FFF1D0; --paper-edge:#E9C98A;
     --ink:#2B1B0E; --muted:#6A4E31;
+    --horizon: 58vh;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
   body {
     color: var(--ink); font: 500 18px/1.6 "Nunito", system-ui, sans-serif;
     display: grid; place-items: center; padding: 24px;
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='40' viewBox='0 0 140 40'%3E%3Cpath d='M0 20 Q17.5 8 35 20 T70 20 T105 20 T140 20' fill='none' stroke='%23ffffff' stroke-opacity='.18' stroke-width='2'/%3E%3C/svg%3E") 0 55vh / 140px 40px repeat-x,
-      linear-gradient(180deg, var(--sky) 0%, #7FD3F5 38%, var(--sea) 52%, var(--deep) 100%);
-    background-attachment: fixed;
+    min-height: 100svh; overflow-x: hidden;
+    background: var(--deep);
   }
+
+  /* ---------- Scene ---------- */
+  .scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+           background: linear-gradient(180deg, var(--sky) 0%, var(--sky-low) var(--horizon), var(--sea) var(--horizon), var(--deep) 100%); }
+
+  .sun { position: absolute; top: 7vh; right: 9vw; width: 110px; height: 110px; }
+  .sun-core { position: absolute; inset: 22px; border-radius: 50%; background: #FFE27A; border: 4px solid var(--ink); }
+  .sun-rays { position: absolute; inset: 0; animation: spin 40s linear infinite; }
+  .sun-rays i { position: absolute; left: 50%; top: 0; width: 8px; height: 18px; margin-left: -4px; border-radius: 4px;
+                background: #FFE27A; border: 3px solid var(--ink); transform-origin: 50% 55px; }
+
+  .cloud { position: absolute; left: -260px; width: 220px; height: 70px; animation: drift linear infinite; }
+  .cloud svg { width: 100%; height: 100%; display: block; }
+  .cloud.c1 { top: 9vh;  animation-duration: 70s;  animation-delay: -12s; }
+  .cloud.c2 { top: 22vh; animation-duration: 95s;  animation-delay: -55s; transform: scale(.7); }
+  .cloud.c3 { top: 4vh;  animation-duration: 120s; animation-delay: -90s; transform: scale(.55); }
+
+  .gull { position: absolute; width: 34px; height: 14px; animation: glide 26s linear infinite; }
+  .gull svg { width: 100%; height: 100%; animation: flap .9s ease-in-out infinite alternate; transform-origin: center; }
+  .gull.g1 { top: 30vh; animation-delay: -4s; }
+  .gull.g2 { top: 34vh; animation-delay: -6s; transform: scale(.75); }
+
+  .ship { position: absolute; top: calc(var(--horizon) - 62px); left: -140px; width: 110px; height: 80px;
+          animation: sail 75s linear infinite; animation-delay: -20s; }
+  .ship svg { width: 100%; height: 100%; animation: bob 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
+
+  .waves { position: absolute; left: 0; right: 0; height: 40px; background-repeat: repeat-x; background-size: 160px 40px; }
+  .waves.w1 { top: calc(var(--horizon) - 12px); opacity: .9; animation: roll 9s linear infinite;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 6 40 20 T80 20 T120 20 T160 20 V40 H0Z' fill='%230B5A9C'/%3E%3Cpath d='M0 20 Q20 6 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E"); }
+  .waves.w2 { top: calc(var(--horizon) + 70px); opacity: .35; animation: roll 14s linear infinite reverse;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 8 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3C/svg%3E"); }
+  .waves.w3 { top: calc(var(--horizon) + 190px); opacity: .22; animation: roll 20s linear infinite;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 8 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3C/svg%3E"); }
+
+  @keyframes spin  { to { transform: rotate(360deg); } }
+  @keyframes drift { to { left: calc(100vw + 40px); } }
+  @keyframes glide { from { left: 105vw; } to { left: -60px; } }
+  @keyframes flap  { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+  @keyframes sail  { to { left: calc(100vw + 40px); } }
+  @keyframes bob   { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(5px) rotate(3deg); } }
+  @keyframes roll  { to { background-position-x: 160px; } }
+
+  /* ---------- Card ---------- */
   main {
-    max-width: 36rem; position: relative;
+    max-width: 36rem; position: relative; z-index: 1;
     background: var(--paper);
     border: 4px solid var(--ink);
     border-radius: 6px;
     padding: clamp(24px, 6vw, 40px);
     box-shadow: 8px 8px 0 var(--ink);
-    transform: rotate(-1deg);
+    transform: perspective(900px) rotate(var(--tilt, -1deg)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform .25s ease-out;
+    animation: drop .9s cubic-bezier(.2,.9,.3,1.35) both;
   }
   main::before { /* pin */
     content: ""; position: absolute; top: -12px; left: 50%; width: 22px; height: 22px; margin-left: -11px;
     border-radius: 50%; background: var(--red); border: 3px solid var(--ink);
   }
+  @keyframes drop { from { opacity: 0; transform: translateY(-60vh) rotate(-12deg); } 70% { opacity: 1; } to { transform: rotate(-1deg); } }
+
   p.kicker {
     display: inline-block; font: 400 1.15rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .08em;
     color: #fff; background: var(--red); border: 3px solid var(--ink);
     padding: 7px 14px 5px; border-radius: 999px; margin: 0 0 18px;
+    animation: pop .5s .7s cubic-bezier(.3,1.6,.5,1) both;
   }
   h1 {
     font: 400 clamp(3rem, 13vw, 5.2rem)/.95 "Bangers", "Impact", sans-serif; letter-spacing: .03em;
@@ -49,20 +96,93 @@
     text-shadow: 5px 5px 0 var(--ink);
     margin: 0 0 20px;
   }
+  h1 .w { display: inline-block; animation: pop .55s cubic-bezier(.3,1.7,.5,1) both; }
+  h1 .w:hover { animation: jiggle .4s ease-in-out; }
+  @keyframes pop { from { opacity: 0; transform: scale(.2) rotate(-10deg); } to { opacity: 1; transform: none; } }
+  @keyframes jiggle { 25% { transform: rotate(-6deg) scale(1.08); } 75% { transform: rotate(5deg) scale(1.08); } }
+
   p { color: var(--muted); margin: 0; font-weight: 700; }
+  main > p:not(.kicker) { animation: rise .6s 1.4s ease-out both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   footer {
     margin-top: 28px; padding-top: 14px; border-top: 3px dashed var(--paper-edge);
     font-size: .9rem; font-weight: 700; color: var(--muted);
   }
-  @media (max-width: 480px) { main { transform: none; box-shadow: 5px 5px 0 var(--ink); } }
+
+  @media (max-width: 480px) {
+    main { --tilt: 0deg; box-shadow: 5px 5px 0 var(--ink); }
+    .sun { width: 80px; height: 80px; top: 4vh; right: 6vw; }
+    .sun-core { inset: 16px; }
+    .sun-rays i { transform-origin: 50% 40px; height: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .cloud.c1 { left: 6vw; } .cloud.c2 { left: 55vw; } .cloud.c3 { left: 30vw; } .ship { left: 12vw; } .gull { display: none; }
+  }
 </style>
 </head>
 <body>
+<div class="scene" aria-hidden="true">
+  <div class="sun"><div class="sun-rays"></div><div class="sun-core"></div></div>
+
+  <div class="cloud c1"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
+  <div class="cloud c2"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
+  <div class="cloud c3"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
+
+  <div class="gull g1"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
+  <div class="gull g2"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
+
+  <div class="ship"><svg viewBox="0 0 110 80">
+    <line x1="55" y1="6" x2="55" y2="58" stroke="#2B1B0E" stroke-width="4"/>
+    <path d="M55 8 Q86 22 82 50 L58 50 Z" fill="#fff" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M52 16 Q30 30 32 50 L52 50 Z" fill="#FFC928" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M55 6 L70 10 L55 14 Z" fill="#D7263D" stroke="#2B1B0E" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M10 56 L100 56 Q94 74 74 74 L34 74 Q16 74 10 56 Z" fill="#B5652B" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/>
+    <line x1="22" y1="64" x2="90" y2="64" stroke="#2B1B0E" stroke-width="2.5"/>
+  </svg></div>
+
+  <div class="waves w1"></div>
+  <div class="waves w2"></div>
+  <div class="waves w3"></div>
+</div>
+
 <main>
   <p class="kicker">Daily fitness journal</p>
   <h1>Welcome, I'm Paulson.</h1>
   <p>This is where I'll share my daily training: what I did, why I did it, and what it's getting me. Full log coming soon.</p>
   <footer>Test page · hosted on Vercel</footer>
 </main>
+
+<script>
+  // Sun rays
+  const rays = document.querySelector(".sun-rays");
+  for (let i = 0; i < 12; i++) {
+    const r = document.createElement("i");
+    r.style.transform = `rotate(${i * 30}deg)`;
+    rays.appendChild(r);
+  }
+
+  // Heading pops in word by word (screen readers still get the full sentence)
+  const h1 = document.querySelector("h1");
+  const words = h1.textContent.trim().split(/\s+/);
+  h1.setAttribute("aria-label", h1.textContent.trim());
+  h1.innerHTML = words.map((w, i) =>
+    `<span class="w" aria-hidden="true" style="animation-delay:${0.85 + i * 0.12}s">${w}</span>`).join(" ");
+
+  // Card tilts toward the pointer on desktop
+  const card = document.querySelector("main");
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!calm && matchMedia("(pointer: fine)").matches) {
+    card.addEventListener("animationend", (e) => {
+      if (e.target !== card) return;
+      card.style.animation = "none";
+      window.addEventListener("pointermove", (ev) => {
+        const x = ev.clientX / innerWidth - 0.5, y = ev.clientY / innerHeight - 0.5;
+        card.style.setProperty("--ry", (x * 10).toFixed(2) + "deg");
+        card.style.setProperty("--rx", (-y * 8).toFixed(2) + "deg");
+      });
+    });
+  }
+</script>
 </body>
 </html>
