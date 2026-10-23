@@ -208,7 +208,7 @@
   dialog.sheet::backdrop { background: rgba(5, 38, 63, .72); backdrop-filter: blur(3px); }
   dialog.sheet[open] { animation: sheet-in .35s cubic-bezier(.2,.9,.3,1.2) both; }
   @keyframes sheet-in { from { opacity: 0; transform: translateY(40px) scale(.96); } to { opacity: 1; transform: none; } }
-  .sheet .card { max-width: none; max-height: calc(100svh - 48px); overflow-y: auto; padding: 22px clamp(18px, 5vw, 32px) 24px; }
+  .sheet .card { max-width: none; max-height: calc(100svh - 48px); overflow-y: auto; overflow-x: hidden; padding: 22px clamp(18px, 5vw, 32px) 24px; }
   .sheet .card::before { display: none; }
 
   .dp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
@@ -237,6 +237,34 @@
   .dp-list .more { grid-column: 1 / -1; font-size: .9rem; font-weight: 700; color: var(--muted); }
   .sheet .dp-note { margin: 0; padding: 12px 14px; background: #fff; border: 3px solid var(--ink); border-radius: 10px; font-weight: 700; color: var(--ink); }
 
+  button.dp-stat { font: inherit; text-align: left; color: inherit; cursor: pointer; position: relative; padding-right: 26px; }
+  button.dp-stat::after { content: "›"; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font: 800 1.4rem/1 "Nunito", sans-serif; color: var(--red); }
+  button.dp-stat:hover { background: #FFF8E4; }
+  button.dp-stat:active { transform: translate(2px, 2px); }
+  .dp-stat .emo { font-size: 1.3rem; margin-right: 4px; vertical-align: -2px; }
+
+  .back-btn { font: 800 .95rem/1 "Nunito", sans-serif; color: var(--ink); background: #fff; border: 3px solid var(--ink);
+              border-radius: 999px; box-shadow: 2px 2px 0 var(--ink); padding: 8px 14px; cursor: pointer; }
+  .back-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+  .mood-month { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 14px; }
+  .mood-month h3 { margin: 0; font: 400 1.5rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .04em; }
+  .mood-month .icon-btn:disabled { opacity: .3; cursor: default; }
+  .mood-mix { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px; }
+  .mood-mix div { background: #fff; border: 3px solid var(--ink); border-radius: 10px; text-align: center; padding: 6px 2px; }
+  .mood-mix .emo { display: block; font-size: 1.6rem; line-height: 1.2; }
+  .mood-mix b { font-size: 1.05rem; }
+  .mood-mix span { display: block; font-size: .72rem; font-weight: 800; color: var(--muted); }
+  .mood-mix div.zero { opacity: .4; }
+  .mood-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+  .sheet .weekdays { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+  .mood-days .md { min-width: 0; }
+  .mood-days .md { aspect-ratio: 1; border-radius: 9px; border: 2px solid rgba(43,27,14,.15); background: rgba(255,255,255,.55);
+                   display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: .72rem; color: var(--muted); padding: 0; }
+  .mood-days .md.blank { border: 0; background: none; }
+  .mood-days .md.future { opacity: .35; }
+  .mood-days button.md { font: inherit; font-weight: 800; font-size: .72rem; background: #fff; border: 3px solid var(--ink); color: var(--ink); cursor: pointer; }
+  .mood-days .md .emo { font-size: 1.35rem; line-height: 1.1; }
+  .mood-summary { margin: 14px 0 0; font-weight: 800; color: var(--ink); }
   .dp-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
   .dp-nav button { flex: 1; font: 800 .95rem/1 "Nunito", sans-serif; color: var(--ink); background: var(--straw);
                    border: 3px solid var(--ink); border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); padding: 11px 10px; cursor: pointer; }
@@ -372,6 +400,7 @@
 
 <dialog class="sheet" id="day-panel" aria-labelledby="dp-date">
   <div class="card">
+   <div id="dp-day-view">
     <div class="dp-top">
       <p class="badge" id="dp-badge"></p>
       <button type="button" class="icon-btn" id="dp-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -383,6 +412,24 @@
       <button type="button" id="dp-prev">‹ Previous day</button>
       <button type="button" id="dp-next">Next day ›</button>
     </div>
+   </div>
+
+   <div id="dp-mood-view" hidden>
+    <div class="dp-top">
+      <button type="button" class="back-btn" id="mood-back">‹ Back</button>
+      <button type="button" class="icon-btn" id="mood-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <h2 class="comic" id="mood-title">Mood</h2>
+    <div class="mood-month">
+      <button type="button" class="icon-btn" id="mood-prev" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h3 id="mood-month-label" aria-live="polite"></h3>
+      <button type="button" class="icon-btn" id="mood-next" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="mood-mix" id="mood-mix"></div>
+    <div class="weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    <div class="mood-days" id="mood-days"></div>
+    <p class="mood-summary" id="mood-summary"></p>
+   </div>
   </div>
 </dialog>
 
@@ -509,10 +556,18 @@
     return { what: `${n} sets`, more: texts.map((t, i) => `Set ${i + 1}: ${t}`).join(" · ") };
   }
 
+  function showView(which) {
+    document.getElementById("dp-day-view").hidden = which !== "day";
+    document.getElementById("dp-mood-view").hidden = which !== "mood";
+    panel.setAttribute("aria-labelledby", which === "mood" ? "mood-title" : "dp-date");
+    panel.querySelector(".card").scrollTop = 0;
+  }
+
   function openDay(key) {
     const e = entryOf(key);
     if (!e) return;
     openKey = key;
+    showView("day");
     const [y, m, d] = key.split("-").map(Number);
     const dt = new Date(y, m - 1, d);
     const badge = document.getElementById("dp-badge");
@@ -529,10 +584,15 @@
     if (cardioMin) stats.push([`${cardioMin} min`, "Cardio"]);
     if (e.steps != null) stats.push([Number(e.steps).toLocaleString("en-IN"), "Steps"]);
     if (e.sleep_h != null) stats.push([`${e.sleep_h} hours`, "Sleep"]);
-    if (e.mood) stats.push([esc(e.mood), "Mood"]);
+    if (e.mood || e.mood_score) {
+      const face = MOODS[e.mood_score];
+      stats.push([`${face ? `<span class="emo" aria-hidden="true">${face.emo}</span>` : ""}${esc(e.mood || face.label)}`, "Mood", "mood"]);
+    }
 
     let html = "";
-    if (stats.length) html += `<div class="dp-stats">${stats.map(([v, l]) => `<div class="dp-stat"><b>${v}</b><span>${l}</span></div>`).join("")}</div>`;
+    if (stats.length) html += `<div class="dp-stats">${stats.map(([v, l, link]) => link
+      ? `<button type="button" class="dp-stat" data-open="${link}" aria-label="${l}: ${v.replace(/<[^>]+>/g, "")}. See this month's ${l.toLowerCase()}"><b>${v}</b><span>${l}</span></button>`
+      : `<div class="dp-stat"><b>${v}</b><span>${l}</span></div>`).join("")}</div>`;
     if ((e.cardio || []).length) {
       html += `<div class="dp-section"><h3>Cardio</h3><ul class="dp-list">${e.cardio.map((c) => {
         const parts = [c.min != null ? `${c.min} min` : "", c.km != null ? `${c.km} km` : ""].filter(Boolean).join(", ");
@@ -557,6 +617,68 @@
     if (!panel.open) { panel.showModal(); root.classList.add("lock"); }
     panel.querySelector(".card").scrollTop = 0;
   }
+
+  // ---------- Mood month ----------
+  const MOODS = { 1: { emo: "😫", label: "Rough" }, 2: { emo: "😕", label: "Low" }, 3: { emo: "😐", label: "Okay" }, 4: { emo: "🙂", label: "Happy" }, 5: { emo: "😄", label: "Great" } };
+  let moodView = null;
+
+  function openMood(y, m) {
+    moodView = new Date(y, m, 1);
+    showView("mood");
+    renderMood();
+    history.replaceState(null, "", `#mood-${y}-${String(m + 1).padStart(2, "0")}`);
+    if (!panel.open) { panel.showModal(); root.classList.add("lock"); }
+    document.getElementById("mood-back").hidden = !openKey;
+  }
+
+  function renderMood() {
+    const y = moodView.getFullYear(), m = moodView.getMonth();
+    const monthName = moodView.toLocaleDateString("en-IN", { month: "long" });
+    document.getElementById("mood-title").textContent = `Mood in ${monthName}`;
+    document.getElementById("mood-month-label").textContent = moodView.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+    document.getElementById("mood-prev").disabled = moodView <= firstMonth;
+    document.getElementById("mood-next").disabled = y === today.getFullYear() && m === today.getMonth();
+
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7, count = new Date(y, m + 1, 0).getDate();
+    let html = "";
+    for (let i = 0; i < lead; i++) html += `<span class="md blank" aria-hidden="true"></span>`;
+    for (let day = 1; day <= count; day++) {
+      const dt = new Date(y, m, day), key = iso(dt), e = entryOf(key), face = e && MOODS[e.mood_score];
+      if (face) {
+        counts[e.mood_score]++;
+        html += `<button type="button" class="md" data-day="${key}" aria-label="${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${face.label}${e.mood ? ", " + esc(e.mood) : ""}. Open day"><span class="emo" aria-hidden="true">${face.emo}</span>${day}</button>`;
+      } else {
+        html += `<span class="md ${dt > today ? "future" : ""}" aria-label="${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: no mood logged">${day}</span>`;
+      }
+    }
+    document.getElementById("mood-days").innerHTML = html;
+    document.getElementById("mood-mix").innerHTML = [5, 4, 3, 2, 1].map((n) =>
+      `<div class="${counts[n] ? "" : "zero"}"><span class="emo" aria-hidden="true">${MOODS[n].emo}</span><b>${counts[n]}</b><span>${MOODS[n].label}</span></div>`).join("");
+
+    const logged = Object.values(counts).reduce((a, b) => a + b, 0);
+    let summary = "No moods logged this month yet.";
+    if (logged) {
+      const top = [5, 4, 3, 2, 1].reduce((best, n) => (counts[n] > counts[best] ? n : best), 5);
+      summary = `${logged} ${logged === 1 ? "day" : "days"} logged. Most often: ${MOODS[top].emo} ${MOODS[top].label}.`;
+    }
+    document.getElementById("mood-summary").textContent = summary;
+  }
+
+  document.getElementById("dp-body").addEventListener("click", (ev) => {
+    const b = ev.target.closest('[data-open="mood"]');
+    if (!b || !openKey) return;
+    const [y, m] = openKey.split("-").map(Number);
+    openMood(y, m - 1);
+  });
+  document.getElementById("mood-days").addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-day]");
+    if (b) openDay(b.dataset.day);
+  });
+  document.getElementById("mood-back").addEventListener("click", () => openDay(openKey));
+  document.getElementById("mood-close").addEventListener("click", () => panel.close());
+  document.getElementById("mood-prev").addEventListener("click", () => { moodView.setMonth(moodView.getMonth() - 1); renderMood(); });
+  document.getElementById("mood-next").addEventListener("click", () => { moodView.setMonth(moodView.getMonth() + 1); renderMood(); });
 
   function stepDay(delta) {
     const all = loggedDates(), next = all[all.indexOf(openKey) + delta];
@@ -601,6 +723,8 @@
       document.getElementById("s-streak").textContent = streak();
       render();
       // Shared link straight to a day, e.g. #day-2026-10-23
+      const mm = location.hash.match(/^#mood-(\d{4})-(\d{2})$/);
+      if (mm) { document.getElementById("tracker").scrollIntoView(); openMood(+mm[1], +mm[2] - 1); }
       const m = location.hash.match(/^#day-(\d{4}-\d{2}-\d{2})$/);
       if (m && log[m[1]]) {
         const [hy, hm] = m[1].split("-").map(Number);
