@@ -255,15 +255,12 @@
   .mood-mix b { font-size: 1.05rem; }
   .mood-mix span { display: block; font-size: .72rem; font-weight: 800; color: var(--muted); }
   .mood-mix div.zero { opacity: .4; }
-  .mood-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
-  .sheet .weekdays { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
-  .mood-days .md { min-width: 0; }
-  .mood-days .md { aspect-ratio: 1; border-radius: 9px; border: 2px solid rgba(43,27,14,.15); background: rgba(255,255,255,.55);
-                   display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: .72rem; color: var(--muted); padding: 0; }
-  .mood-days .md.blank { border: 0; background: none; }
-  .mood-days .md.future { opacity: .35; }
-  .mood-days button.md { font: inherit; font-weight: 800; font-size: .72rem; background: #fff; border: 3px solid var(--ink); color: var(--ink); cursor: pointer; }
-  .mood-days .md .emo { font-size: 1.35rem; line-height: 1.1; }
+  .mood-chart { background: #fff; border: 3px solid var(--ink); border-radius: 12px; padding: 8px 6px 4px; }
+  .mood-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .mood-chart .pt { cursor: pointer; }
+  .mood-chart .pt:hover circle.dot, .mood-chart .pt:focus-visible circle.dot { r: 8; }
+  .mood-chart .pt:focus-visible { outline: none; }
+  .mood-chart .pt:focus-visible circle.ring { stroke: var(--red); }
   .mood-summary { margin: 14px 0 0; font-weight: 800; color: var(--ink); }
   .dp-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
   .dp-nav button { flex: 1; font: 800 .95rem/1 "Nunito", sans-serif; color: var(--ink); background: var(--straw);
@@ -426,8 +423,7 @@
       <button type="button" class="icon-btn" id="mood-next" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
     <div class="mood-mix" id="mood-mix"></div>
-    <div class="weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-    <div class="mood-days" id="mood-days"></div>
+    <div class="mood-chart" id="mood-chart"></div>
     <p class="mood-summary" id="mood-summary"></p>
    </div>
   </div>
@@ -640,19 +636,46 @@
     document.getElementById("mood-next").disabled = y === today.getFullYear() && m === today.getMonth();
 
     const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    const lead = (new Date(y, m, 1).getDay() + 6) % 7, count = new Date(y, m + 1, 0).getDate();
-    let html = "";
-    for (let i = 0; i < lead; i++) html += `<span class="md blank" aria-hidden="true"></span>`;
+    const count = new Date(y, m + 1, 0).getDate();
+    const pts = [];
     for (let day = 1; day <= count; day++) {
-      const dt = new Date(y, m, day), key = iso(dt), e = entryOf(key), face = e && MOODS[e.mood_score];
-      if (face) {
-        counts[e.mood_score]++;
-        html += `<button type="button" class="md" data-day="${key}" aria-label="${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${face.label}${e.mood ? ", " + esc(e.mood) : ""}. Open day"><span class="emo" aria-hidden="true">${face.emo}</span>${day}</button>`;
-      } else {
-        html += `<span class="md ${dt > today ? "future" : ""}" aria-label="${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: no mood logged">${day}</span>`;
-      }
+      const key = iso(new Date(y, m, day)), e = entryOf(key);
+      if (e && MOODS[e.mood_score]) { counts[e.mood_score]++; pts.push({ day, key, score: e.mood_score, words: e.mood || "" }); }
     }
-    document.getElementById("mood-days").innerHTML = html;
+
+    // Line chart: x = day of month, y = mood 1..5
+    const W = 340, H = 210, L = 34, R = 10, T = 12, B = 28;
+    const x = (d) => L + ((d - 1) * (W - L - R)) / (count - 1);
+    const yv = (v) => T + ((5 - v) * (H - T - B)) / 4;
+    const step = (W - L - R) / (count - 1);
+    const COLORS = { 1: "#D7263D", 2: "#F08A24", 3: "#E0B000", 4: "#57B85F", 5: "#2BB673" };
+    let svg = "";
+    for (let v = 1; v <= 5; v++) {
+      svg += `<line x1="${L}" x2="${W - R}" y1="${yv(v)}" y2="${yv(v)}" stroke="#2B1B0E" stroke-opacity=".12" stroke-dasharray="${v === 3 ? "0" : "3 4"}"/>`;
+      svg += `<text x="${L - 8}" y="${yv(v) + 6}" text-anchor="end" font-size="17">${MOODS[v].emo}</text>`;
+    }
+    [1, 5, 10, 15, 20, 25, count].filter((d, k, a) => d <= count && a.indexOf(d) === k && !(d === 25 && count - 25 < 3)).forEach((d) => {
+      svg += `<text x="${x(d)}" y="${H - 8}" text-anchor="middle" font-size="11" font-weight="800" fill="#6A4E31" font-family="Nunito, sans-serif">${d}</text>`;
+    });
+    if (today.getFullYear() === y && today.getMonth() === m) {
+      const tx = x(today.getDate());
+      svg += `<line x1="${tx}" x2="${tx}" y1="${T - 4}" y2="${H - B + 4}" stroke="#D7263D" stroke-width="2" stroke-dasharray="4 4"/>`;
+      svg += `<text x="${tx}" y="${H - B + 16}" text-anchor="middle" font-size="9" font-weight="800" fill="#D7263D" font-family="Nunito, sans-serif">today</text>`;
+    }
+    // Lines join consecutive logged days; a missed day breaks the line
+    let seg = [];
+    const flush = () => { if (seg.length > 1) svg += `<polyline points="${seg.map((p) => `${x(p.day).toFixed(1)},${yv(p.score).toFixed(1)}`).join(" ")}" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`; seg = []; };
+    pts.forEach((p, k) => { if (k && p.day !== pts[k - 1].day + 1) flush(); seg.push(p); });
+    flush();
+    pts.forEach((p) => {
+      const label = `${new Date(y, m, p.day).toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${MOODS[p.score].label}${p.words ? ", " + p.words : ""}. Open day`;
+      svg += `<g class="pt" data-day="${p.key}" role="button" tabindex="0" aria-label="${esc(label)}">
+        <rect x="${(x(p.day) - step / 2).toFixed(1)}" y="${yv(p.score) - 16}" width="${step.toFixed(1)}" height="32" fill="transparent"/>
+        <circle class="dot ring" cx="${x(p.day)}" cy="${yv(p.score)}" r="6" fill="${COLORS[p.score]}" stroke="#2B1B0E" stroke-width="2.5"/>
+        <title>${esc(label.replace(". Open day", ""))}</title></g>`;
+    });
+    if (!pts.length) svg += `<text x="${(L + W - R) / 2}" y="${H / 2}" text-anchor="middle" font-size="13" font-weight="800" fill="#6A4E31" font-family="Nunito, sans-serif">No moods logged this month</text>`;
+    document.getElementById("mood-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mood by day for ${monthName}">${svg}</svg>`;
     document.getElementById("mood-mix").innerHTML = [5, 4, 3, 2, 1].map((n) =>
       `<div class="${counts[n] ? "" : "zero"}"><span class="emo" aria-hidden="true">${MOODS[n].emo}</span><b>${counts[n]}</b><span>${MOODS[n].label}</span></div>`).join("");
 
@@ -671,9 +694,14 @@
     const [y, m] = openKey.split("-").map(Number);
     openMood(y, m - 1);
   });
-  document.getElementById("mood-days").addEventListener("click", (ev) => {
+  const moodChart = document.getElementById("mood-chart");
+  moodChart.addEventListener("click", (ev) => {
     const b = ev.target.closest("[data-day]");
     if (b) openDay(b.dataset.day);
+  });
+  moodChart.addEventListener("keydown", (ev) => {
+    const b = ev.target.closest("[data-day]");
+    if (b && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); openDay(b.dataset.day); }
   });
   document.getElementById("mood-back").addEventListener("click", () => openDay(openKey));
   document.getElementById("mood-close").addEventListener("click", () => panel.close());
