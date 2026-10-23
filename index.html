@@ -395,7 +395,7 @@
     let html = "", w = 0, r = 0;
     for (let i = 0; i < lead; i++) html += `<span class="day blank" aria-hidden="true"></span>`;
     for (let day = 1; day <= count; day++) {
-      const dt = new Date(y, m, day), key = iso(dt), status = log[key];
+      const dt = new Date(y, m, day), key = iso(dt), entry = log[key], status = typeof entry === "string" ? entry : entry && entry.status;
       if (status === "workout") w++;
       if (status === "rest") r++;
       const cls = ["day", status || "", dt > today ? "future" : "", +dt === +today ? "today" : "", status && !animated ? "fill" : ""].join(" ");

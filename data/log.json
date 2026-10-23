@@ -1,3 +1,52 @@
 {
-  "days": {}
+  "days": {
+    "2026-10-23": {
+      "status": "workout",
+      "focus": "Tendon strengthening",
+      "cardio": [
+        {
+          "type": "Cardio",
+          "min": 15
+        }
+      ],
+      "exercises": [
+        {
+          "name": "Wall sit",
+          "sets": [
+            {
+              "sec": 60
+            },
+            {
+              "sec": 60
+            },
+            {
+              "sec": 60
+            }
+          ]
+        },
+        {
+          "name": "Dead hang",
+          "sets": [
+            {
+              "sec": 30
+            },
+            {
+              "sec": 30
+            },
+            {
+              "sec": 30
+            },
+            {
+              "sec": 30
+            }
+          ]
+        },
+        {
+          "name": "Wall push hold",
+          "sets": []
+        }
+      ],
+      "note": "Back after a one-week break. Focused on strengthening my tendons."
+    }
+  }
 }
