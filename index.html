@@ -194,6 +194,55 @@
   .legend .ln { background: rgba(255,255,255,.5); border-color: rgba(43,27,14,.3); }
   .empty-note { margin: 14px 0 0; font-size: .95rem; font-weight: 700; color: var(--muted); }
 
+  button.day { font: inherit; font-weight: 800; padding: 0; cursor: pointer; transition: transform .12s; }
+  button.day:hover { transform: translateY(-2px) rotate(-2deg); }
+  button.day:active { transform: translateY(1px); }
+  .tap-hint { margin: 10px 0 0; font-size: .9rem; font-weight: 700; color: var(--muted); }
+
+  /* ---------- Day panel ---------- */
+  html.lock { overflow: hidden; }
+  dialog.sheet {
+    border: 0; padding: 0; background: none; color: var(--ink);
+    width: min(36rem, calc(100vw - 32px)); max-height: calc(100svh - 48px); overflow: visible;
+  }
+  dialog.sheet::backdrop { background: rgba(5, 38, 63, .72); backdrop-filter: blur(3px); }
+  dialog.sheet[open] { animation: sheet-in .35s cubic-bezier(.2,.9,.3,1.2) both; }
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(40px) scale(.96); } to { opacity: 1; transform: none; } }
+  .sheet .card { max-width: none; max-height: calc(100svh - 48px); overflow-y: auto; padding: 22px clamp(18px, 5vw, 32px) 24px; }
+  .sheet .card::before { display: none; }
+
+  .dp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .sheet .badge { display: inline-block; margin: 0; font: 400 1.05rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .08em;
+           color: #fff; border: 3px solid var(--ink); border-radius: 999px; padding: 6px 12px 4px; }
+  .badge.workout { background: var(--workout); }
+  .badge.rest { background: var(--rest); }
+  .icon-btn { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 3px solid var(--ink); background: #fff;
+              box-shadow: 2px 2px 0 var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; }
+  .icon-btn svg { width: 16px; height: 16px; }
+  .icon-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+  .sheet h2 { font-size: clamp(2rem, 8vw, 2.8rem); line-height: 1; margin: 6px 0 4px; text-shadow: 3px 3px 0 var(--ink); -webkit-text-stroke-width: 2.5px; }
+  .sheet .dp-focus { margin: 0 0 16px; font-weight: 800; color: var(--muted); }
+
+  .dp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 20px; }
+  .dp-stat { background: #fff; border: 3px solid var(--ink); border-radius: 10px; padding: 8px 10px; }
+  .dp-stat b { display: block; font-size: 1.05rem; font-weight: 800; line-height: 1.25; }
+  .dp-stat span { font-size: .8rem; font-weight: 800; color: var(--muted); }
+
+  .dp-section { margin: 0 0 18px; }
+  .dp-section h3 { margin: 0 0 8px; font: 400 1.35rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .05em; color: var(--red); }
+  .dp-list { list-style: none; margin: 0; padding: 0; border-top: 2px dashed var(--paper-edge); }
+  .dp-list li { padding: 10px 0; border-bottom: 2px dashed var(--paper-edge); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: baseline; }
+  .dp-list .name { font-weight: 800; }
+  .dp-list .what { font-weight: 800; color: var(--ink); text-align: right; }
+  .dp-list .more { grid-column: 1 / -1; font-size: .9rem; font-weight: 700; color: var(--muted); }
+  .sheet .dp-note { margin: 0; padding: 12px 14px; background: #fff; border: 3px solid var(--ink); border-radius: 10px; font-weight: 700; color: var(--ink); }
+
+  .dp-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+  .dp-nav button { flex: 1; font: 800 .95rem/1 "Nunito", sans-serif; color: var(--ink); background: var(--straw);
+                   border: 3px solid var(--ink); border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); padding: 11px 10px; cursor: pointer; }
+  .dp-nav button:disabled { opacity: .35; cursor: default; }
+  .dp-nav button:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+
   @media (max-width: 480px) {
     .hero .card { --tilt: 0deg; box-shadow: 5px 5px 0 var(--ink); }
     .sun { width: 80px; height: 80px; top: 4vh; right: 6vw; }
@@ -203,7 +252,11 @@
     .day { font-size: .85rem; border-radius: 7px; }
     .stat { padding: 8px; }
     .stat b { font-size: 1.6rem; }
+    dialog.sheet { width: 100vw; max-width: 100vw; margin: auto 0 0; max-height: 88svh; }
+    dialog.sheet[open] { animation-name: sheet-up; }
+    .sheet .card { border-radius: 16px 16px 0 0; border-bottom: 0; box-shadow: none; max-height: 88svh; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
   }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .cloud.c1 { left: 6vw; } .cloud.c2 { left: 55vw; } .cloud.c3 { left: 30vw; } .ship { left: 12vw; } .gull, .bubbles, .fishes { display: none; }
@@ -305,16 +358,33 @@
       <button type="button" id="next" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
     <div class="weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-    <div class="days" id="days" role="list"></div>
+    <div class="days" id="days"></div>
 
     <div class="legend">
       <span><i class="lw"></i>Workout</span>
       <span><i class="lr"></i>Rest day</span>
       <span><i class="ln"></i>Not logged</span>
     </div>
+    <p class="tap-hint" id="tap-hint" hidden>Tap a colored day to see what was done.</p>
     <p class="empty-note" id="empty-note" hidden>No days logged yet. Each day gets colored here as it's logged.</p>
   </div>
 </section>
+
+<dialog class="sheet" id="day-panel" aria-labelledby="dp-date">
+  <div class="card">
+    <div class="dp-top">
+      <p class="badge" id="dp-badge"></p>
+      <button type="button" class="icon-btn" id="dp-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <h2 class="comic" id="dp-date"></h2>
+    <p class="dp-focus" id="dp-focus"></p>
+    <div id="dp-body"></div>
+    <div class="dp-nav">
+      <button type="button" id="dp-prev">‹ Previous day</button>
+      <button type="button" id="dp-next">Next day ›</button>
+    </div>
+  </div>
+</dialog>
 
 <script>
 (() => {
@@ -400,12 +470,116 @@
       if (status === "rest") r++;
       const cls = ["day", status || "", dt > today ? "future" : "", +dt === +today ? "today" : "", status && !animated ? "fill" : ""].join(" ");
       const label = `${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${status === "workout" ? "workout" : status === "rest" ? "rest day" : dt > today ? "upcoming" : "not logged"}`;
-      html += `<span class="${cls}" role="listitem" aria-label="${label}" style="animation-delay:${(day * 0.02).toFixed(2)}s">${day}</span>`;
+      const delay = `animation-delay:${(day * 0.02).toFixed(2)}s`;
+      html += status
+        ? `<button type="button" class="${cls}" data-date="${key}" aria-label="${label}. Open details" style="${delay}">${day}</button>`
+        : `<span class="${cls}" aria-label="${label}" style="${delay}">${day}</span>`;
     }
     document.getElementById("days").innerHTML = html;
     document.getElementById("s-workout").textContent = w;
     document.getElementById("s-rest").textContent = r;
   }
+
+  // ---------- Day panel ----------
+  const panel = document.getElementById("day-panel");
+  const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const entryOf = (key) => { const e = log[key]; return typeof e === "string" ? { status: e } : e; };
+  const loggedDates = () => Object.keys(log).sort();
+  let openKey = null;
+
+  function dur(sec) {
+    const m = Math.floor(sec / 60), s = Math.round(sec % 60);
+    if (!m) return `${s} sec`;
+    return s ? `${m} min ${s} sec` : `${m} min`;
+  }
+  function setText(st) {
+    const bits = [];
+    if (st.reps != null) bits.push(`${st.reps} reps`);
+    if (st.sec != null) bits.push(st.reps != null ? dur(st.sec) : `${dur(st.sec)} hold`);
+    let t = bits.join(", ") || "done";
+    if (st.kg) t += ` with ${st.kg} kg`;
+    return t;
+  }
+  function setsSummary(sets) {
+    if (!sets || !sets.length) return { what: "Done", more: "" };
+    const texts = sets.map(setText);
+    const same = texts.every((t) => t === texts[0]);
+    const n = sets.length;
+    if (same) return { what: `${n} ${n === 1 ? "set" : "sets"} × ${texts[0]}`, more: "" };
+    return { what: `${n} sets`, more: texts.map((t, i) => `Set ${i + 1}: ${t}`).join(" · ") };
+  }
+
+  function openDay(key) {
+    const e = entryOf(key);
+    if (!e) return;
+    openKey = key;
+    const [y, m, d] = key.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    const badge = document.getElementById("dp-badge");
+    badge.className = "badge " + (e.status || "");
+    badge.textContent = e.status === "rest" ? "Rest day" : "Workout";
+    document.getElementById("dp-date").textContent = dt.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" });
+    const focus = document.getElementById("dp-focus");
+    focus.textContent = e.focus ? `Focus: ${e.focus}` : "";
+    focus.hidden = !e.focus;
+
+    const cardioMin = (e.cardio || []).reduce((a, c) => a + (Number(c.min) || 0), 0);
+    const stats = [];
+    if ((e.exercises || []).length) stats.push([`${e.exercises.length}`, e.exercises.length === 1 ? "Exercise" : "Exercises"]);
+    if (cardioMin) stats.push([`${cardioMin} min`, "Cardio"]);
+    if (e.steps != null) stats.push([Number(e.steps).toLocaleString("en-IN"), "Steps"]);
+    if (e.sleep_h != null) stats.push([`${e.sleep_h} hours`, "Sleep"]);
+    if (e.mood) stats.push([esc(e.mood), "Mood"]);
+
+    let html = "";
+    if (stats.length) html += `<div class="dp-stats">${stats.map(([v, l]) => `<div class="dp-stat"><b>${v}</b><span>${l}</span></div>`).join("")}</div>`;
+    if ((e.cardio || []).length) {
+      html += `<div class="dp-section"><h3>Cardio</h3><ul class="dp-list">${e.cardio.map((c) => {
+        const parts = [c.min != null ? `${c.min} min` : "", c.km != null ? `${c.km} km` : ""].filter(Boolean).join(", ");
+        return `<li><span class="name">${esc(c.type || "Cardio")}</span><span class="what">${esc(parts)}</span></li>`;
+      }).join("")}</ul></div>`;
+    }
+    if ((e.exercises || []).length) {
+      html += `<div class="dp-section"><h3>Strength</h3><ul class="dp-list">${e.exercises.map((ex) => {
+        const s = setsSummary(ex.sets);
+        return `<li><span class="name">${esc(ex.name)}</span><span class="what">${esc(s.what)}</span>${s.more ? `<span class="more">${esc(s.more)}</span>` : ""}${ex.note ? `<span class="more">${esc(ex.note)}</span>` : ""}</li>`;
+      }).join("")}</ul></div>`;
+    }
+    if (e.note) html += `<div class="dp-section"><h3>Notes</h3><p class="dp-note">${esc(e.note)}</p></div>`;
+    if (!html) html = `<p class="dp-note">${e.status === "rest" ? "Rest and recovery." : "No details logged for this day."}</p>`;
+    document.getElementById("dp-body").innerHTML = html;
+
+    const all = loggedDates(), i = all.indexOf(key);
+    document.getElementById("dp-prev").disabled = i <= 0;
+    document.getElementById("dp-next").disabled = i < 0 || i >= all.length - 1;
+
+    history.replaceState(null, "", `#day-${key}`);
+    if (!panel.open) { panel.showModal(); root.classList.add("lock"); }
+    panel.querySelector(".card").scrollTop = 0;
+  }
+
+  function stepDay(delta) {
+    const all = loggedDates(), next = all[all.indexOf(openKey) + delta];
+    if (!next) return;
+    const [ny, nm] = next.split("-").map(Number);
+    if (ny !== view.getFullYear() || nm - 1 !== view.getMonth()) { view = new Date(ny, nm - 1, 1); render(); }
+    openDay(next);
+  }
+
+  document.getElementById("days").addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-date]");
+    if (b) openDay(b.dataset.date);
+  });
+  document.getElementById("dp-close").addEventListener("click", () => panel.close());
+  document.getElementById("dp-prev").addEventListener("click", () => stepDay(-1));
+  document.getElementById("dp-next").addEventListener("click", () => stepDay(1));
+  panel.addEventListener("click", (ev) => { if (ev.target === panel) panel.close(); }); // tap outside the card
+  panel.addEventListener("close", () => {
+    root.classList.remove("lock");
+    history.replaceState(null, "", location.pathname + location.search);
+    const b = document.querySelector(`[data-date="${openKey}"]`);
+    if (b) b.focus({ preventScroll: true });
+  });
 
   document.getElementById("prev").addEventListener("click", () => { view.setMonth(view.getMonth() - 1); render(); });
   document.getElementById("next").addEventListener("click", () => { view.setMonth(view.getMonth() + 1); render(); });
@@ -423,8 +597,17 @@
       const dates = Object.keys(log).sort();
       if (dates.length) { const [fy, fm] = dates[0].split("-").map(Number); firstMonth = new Date(fy, fm - 1, 1); }
       document.getElementById("empty-note").hidden = dates.length > 0;
+      document.getElementById("tap-hint").hidden = dates.length === 0;
       document.getElementById("s-streak").textContent = streak();
       render();
+      // Shared link straight to a day, e.g. #day-2026-10-23
+      const m = location.hash.match(/^#day-(\d{4}-\d{2}-\d{2})$/);
+      if (m && log[m[1]]) {
+        const [hy, hm] = m[1].split("-").map(Number);
+        view = new Date(hy, hm - 1, 1); render();
+        document.getElementById("tracker").scrollIntoView();
+        openDay(m[1]);
+      }
     })
     .catch(() => { document.getElementById("empty-note").hidden = false; render(); });
 })();
