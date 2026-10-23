@@ -255,6 +255,8 @@
   .mood-mix b { font-size: 1.05rem; }
   .mood-mix span { display: block; font-size: .72rem; font-weight: 800; color: var(--muted); }
   .mood-mix div.zero { opacity: .4; }
+  .mood-mix.four { grid-template-columns: repeat(4, 1fr); }
+  .mood-mix.four b { display: block; font-size: 1.15rem; padding-top: 4px; }
   .mood-chart { background: #fff; border: 3px solid var(--ink); border-radius: 12px; padding: 8px 6px 4px; }
   .mood-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
   .mood-chart .pt { cursor: pointer; }
@@ -579,7 +581,7 @@
     if ((e.exercises || []).length) stats.push([`${e.exercises.length}`, e.exercises.length === 1 ? "Exercise" : "Exercises"]);
     if (cardioMin) stats.push([`${cardioMin} min`, "Cardio"]);
     if (e.steps != null) stats.push([Number(e.steps).toLocaleString("en-IN"), "Steps"]);
-    if (e.sleep_h != null) stats.push([`${e.sleep_h} hours`, "Sleep"]);
+    if (e.sleep_h != null) stats.push([`${e.sleep_h} hours`, "Sleep", "sleep"]);
     if (e.mood || e.mood_score) {
       const face = MOODS[e.mood_score];
       stats.push([`${face ? `<span class="emo" aria-hidden="true">${face.emo}</span>` : ""}${esc(e.mood || face.label)}`, "Mood", "mood"]);
@@ -616,24 +618,100 @@
 
   // ---------- Mood month ----------
   const MOODS = { 1: { emo: "😫", label: "Rough" }, 2: { emo: "😕", label: "Low" }, 3: { emo: "😐", label: "Okay" }, 4: { emo: "🙂", label: "Happy" }, 5: { emo: "😄", label: "Great" } };
-  let moodView = null;
+  let moodView = null, metric = "mood";
 
-  function openMood(y, m) {
+  function openMetric(kind, y, m) {
+    metric = kind;
     moodView = new Date(y, m, 1);
     showView("mood");
-    renderMood();
-    history.replaceState(null, "", `#mood-${y}-${String(m + 1).padStart(2, "0")}`);
+    renderMetric();
+    history.replaceState(null, "", `#${kind}-${y}-${String(m + 1).padStart(2, "0")}`);
     if (!panel.open) { panel.showModal(); root.classList.add("lock"); }
     document.getElementById("mood-back").hidden = !openKey;
   }
 
-  function renderMood() {
+  function renderMetric() {
     const y = moodView.getFullYear(), m = moodView.getMonth();
     const monthName = moodView.toLocaleDateString("en-IN", { month: "long" });
-    document.getElementById("mood-title").textContent = `Mood in ${monthName}`;
+    document.getElementById("mood-title").textContent = `${metric === "sleep" ? "Sleep" : "Mood"} in ${monthName}`;
     document.getElementById("mood-month-label").textContent = moodView.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
     document.getElementById("mood-prev").disabled = moodView <= firstMonth;
     document.getElementById("mood-next").disabled = y === today.getFullYear() && m === today.getMonth();
+    document.getElementById("mood-mix").className = "mood-mix" + (metric === "sleep" ? " four" : "");
+    if (metric === "sleep") renderSleep(y, m, monthName); else renderMood(y, m, monthName);
+  }
+
+  // Shared chart frame: x = day of month; draws x labels and the today marker
+  function chartFrame(y, m, count, W, H, L, R, T, B) {
+    const x = (d) => L + ((d - 1) * (W - L - R)) / (count - 1);
+    let svg = "";
+    [1, 5, 10, 15, 20, 25, count].filter((d, k, a) => d <= count && a.indexOf(d) === k && !(d === 25 && count - 25 < 3)).forEach((d) => {
+      svg += `<text x="${x(d)}" y="${H - 8}" text-anchor="middle" font-size="11" font-weight="800" fill="#6A4E31" font-family="Nunito, sans-serif">${d}</text>`;
+    });
+    if (today.getFullYear() === y && today.getMonth() === m) {
+      const tx = x(today.getDate());
+      svg += `<line x1="${tx}" x2="${tx}" y1="${T - 4}" y2="${H - B + 4}" stroke="#D7263D" stroke-width="2" stroke-dasharray="4 4"/>`;
+      svg += `<text x="${tx}" y="${H - B + 16}" text-anchor="middle" font-size="9" font-weight="800" fill="#D7263D" font-family="Nunito, sans-serif">today</text>`;
+    }
+    return { x, svg, step: (W - L - R) / (count - 1) };
+  }
+
+  function linePath(pts, x, yv) {
+    let out = "", seg = [];
+    const flush = () => { if (seg.length > 1) out += `<polyline points="${seg.map((p) => `${x(p.day).toFixed(1)},${yv(p.v).toFixed(1)}`).join(" ")}" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`; seg = []; };
+    pts.forEach((p, k) => { if (k && p.day !== pts[k - 1].day + 1) flush(); seg.push(p); });
+    flush();
+    return out;
+  }
+
+  function renderSleep(y, m, monthName) {
+    const count = new Date(y, m + 1, 0).getDate();
+    const pts = [];
+    for (let day = 1; day <= count; day++) {
+      const key = iso(new Date(y, m, day)), e = entryOf(key);
+      if (e && e.sleep_h != null && !isNaN(Number(e.sleep_h))) pts.push({ day, key, v: Number(e.sleep_h) });
+    }
+    const hrs = (h) => `${Number(h.toFixed(1))} h`;
+    const vals = pts.map((p) => p.v);
+    const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+    const boxes = [
+      [avg != null ? hrs(avg) : "—", "Average"],
+      [vals.length ? hrs(Math.max(...vals)) : "—", "Longest"],
+      [vals.length ? hrs(Math.min(...vals)) : "—", "Shortest"],
+      [`${vals.length}`, vals.length === 1 ? "Night logged" : "Nights logged"],
+    ];
+    document.getElementById("mood-mix").innerHTML = boxes.map(([v, l]) => `<div class="${vals.length ? "" : "zero"}"><b>${v}</b><span>${l}</span></div>`).join("");
+
+    const W = 340, H = 210, L = 34, R = 10, T = 12, B = 28;
+    const lo = Math.min(4, Math.floor(Math.min(...vals, 10))), hi = Math.max(10, Math.ceil(Math.max(...vals, 0)));
+    const yv = (v) => T + ((hi - v) * (H - T - B)) / (hi - lo);
+    const f = chartFrame(y, m, count, W, H, L, R, T, B);
+    let svg = `<rect x="${L}" y="${yv(9)}" width="${W - L - R}" height="${yv(7) - yv(9)}" fill="#2BB673" fill-opacity=".12"/>`;
+    svg += `<text x="${W - R - 4}" y="${yv(9) + 12}" text-anchor="end" font-size="10" font-weight="800" fill="#2B8A57" font-family="Nunito, sans-serif">7–9 h range</text>`;
+    for (let v = lo; v <= hi; v += (hi - lo > 8 ? 2 : 1)) {
+      svg += `<line x1="${L}" x2="${W - R}" y1="${yv(v)}" y2="${yv(v)}" stroke="#2B1B0E" stroke-opacity=".12" stroke-dasharray="3 4"/>`;
+      svg += `<text x="${L - 7}" y="${yv(v) + 4}" text-anchor="end" font-size="11" font-weight="800" fill="#6A4E31" font-family="Nunito, sans-serif">${v}h</text>`;
+    }
+    svg += f.svg + linePath(pts, f.x, yv);
+    pts.forEach((p) => {
+      const label = `${new Date(y, m, p.day).toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${hrs(p.v)} of sleep. Open day`;
+      svg += `<g class="pt" data-day="${p.key}" role="button" tabindex="0" aria-label="${esc(label)}">
+        <rect x="${(f.x(p.day) - f.step / 2).toFixed(1)}" y="${yv(p.v) - 16}" width="${f.step.toFixed(1)}" height="32" fill="transparent"/>
+        <circle class="dot ring" cx="${f.x(p.day)}" cy="${yv(p.v)}" r="6" fill="#3B8FE0" stroke="#2B1B0E" stroke-width="2.5"/>
+        <title>${esc(label.replace(". Open day", ""))}</title></g>`;
+    });
+    if (!pts.length) svg += `<text x="${(L + W - R) / 2}" y="${H / 2}" text-anchor="middle" font-size="13" font-weight="800" fill="#6A4E31" font-family="Nunito, sans-serif">No sleep logged this month</text>`;
+    document.getElementById("mood-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Hours of sleep by night for ${monthName}">${svg}</svg>`;
+
+    let summary = "No sleep logged this month yet.";
+    if (vals.length) {
+      const inRange = vals.filter((v) => v >= 7 && v <= 9).length;
+      summary = `Averaging ${hrs(avg)} a night. ${inRange} of ${vals.length} ${vals.length === 1 ? "night" : "nights"} in the 7–9 h range.`;
+    }
+    document.getElementById("mood-summary").textContent = summary;
+  }
+
+  function renderMood(y, m, monthName) {
 
     const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     const count = new Date(y, m + 1, 0).getDate();
@@ -689,10 +767,10 @@
   }
 
   document.getElementById("dp-body").addEventListener("click", (ev) => {
-    const b = ev.target.closest('[data-open="mood"]');
+    const b = ev.target.closest("[data-open]");
     if (!b || !openKey) return;
     const [y, m] = openKey.split("-").map(Number);
-    openMood(y, m - 1);
+    openMetric(b.dataset.open, y, m - 1);
   });
   const moodChart = document.getElementById("mood-chart");
   moodChart.addEventListener("click", (ev) => {
@@ -705,8 +783,8 @@
   });
   document.getElementById("mood-back").addEventListener("click", () => openDay(openKey));
   document.getElementById("mood-close").addEventListener("click", () => panel.close());
-  document.getElementById("mood-prev").addEventListener("click", () => { moodView.setMonth(moodView.getMonth() - 1); renderMood(); });
-  document.getElementById("mood-next").addEventListener("click", () => { moodView.setMonth(moodView.getMonth() + 1); renderMood(); });
+  document.getElementById("mood-prev").addEventListener("click", () => { moodView.setMonth(moodView.getMonth() - 1); renderMetric(); });
+  document.getElementById("mood-next").addEventListener("click", () => { moodView.setMonth(moodView.getMonth() + 1); renderMetric(); });
 
   function stepDay(delta) {
     const all = loggedDates(), next = all[all.indexOf(openKey) + delta];
@@ -751,8 +829,8 @@
       document.getElementById("s-streak").textContent = streak();
       render();
       // Shared link straight to a day, e.g. #day-2026-10-23
-      const mm = location.hash.match(/^#mood-(\d{4})-(\d{2})$/);
-      if (mm) { document.getElementById("tracker").scrollIntoView(); openMood(+mm[1], +mm[2] - 1); }
+      const mm = location.hash.match(/^#(mood|sleep)-(\d{4})-(\d{2})$/);
+      if (mm) { document.getElementById("tracker").scrollIntoView(); openMetric(mm[1], +mm[2], +mm[3] - 1); }
       const m = location.hash.match(/^#day-(\d{4}-\d{2}-\d{2})$/);
       if (m && log[m[1]]) {
         const [hy, hm] = m[1].split("-").map(Number);
