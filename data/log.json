@@ -5,7 +5,7 @@
       "focus": "Tendon strengthening",
       "cardio": [
         {
-          "type": "Cardio",
+          "type": "Incline walk (treadmill)",
           "min": 15
         }
       ],
@@ -43,10 +43,22 @@
         },
         {
           "name": "Wall push hold",
-          "sets": []
+          "sets": [
+            {
+              "sec": 5
+            },
+            {
+              "sec": 5
+            },
+            {
+              "sec": 5
+            }
+          ]
         }
       ],
-      "note": "Back after a one-week break. Focused on strengthening my tendons."
+      "note": "Back after a one-week break. Focused on strengthening my tendons. Slept great.",
+      "sleep_h": 7,
+      "mood": "A bit happy"
     }
   }
 }
