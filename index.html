@@ -67,9 +67,21 @@
   .waves.w3 { top: 190px; opacity: .18; animation: roll 20s linear infinite;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 8 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3C/svg%3E"); }
 
-  .bubbles { position: absolute; inset: 0; opacity: var(--rise); }
+  .bubbles { position: absolute; inset: 0; opacity: var(--rise); z-index: 2; }
   .bubbles i { position: absolute; bottom: -20px; width: var(--s); height: var(--s); border-radius: 50%;
                border: 2px solid rgba(255,255,255,.35); animation: bubble var(--d) linear infinite; animation-delay: var(--delay); }
+
+
+  /* Fish: only show once the sea has risen */
+  .fishes { position: absolute; inset: 0; opacity: var(--rise); z-index: 2; }
+  .fish { position: absolute; left: 0; animation: swim var(--t) linear infinite; animation-delay: var(--delay, 0s); }
+  .fish.rev { animation-name: swim-rev; }
+  .fish svg { display: block; width: 100%; height: 100%; animation: wiggle 1.6s ease-in-out infinite; }
+  .fish.rev svg { transform: scaleX(-1); animation-name: wiggle-rev; }
+  @keyframes swim     { from { transform: translateX(-160px); } to { transform: translateX(calc(100vw + 40px)); } }
+  @keyframes swim-rev { from { transform: translateX(calc(100vw + 40px)); } to { transform: translateX(-160px); } }
+  @keyframes wiggle     { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(6px) rotate(2deg); } }
+  @keyframes wiggle-rev { 0%,100% { transform: scaleX(-1) translateY(0) rotate(-2deg); } 50% { transform: scaleX(-1) translateY(6px) rotate(2deg); } }
 
   @keyframes spin   { to { transform: rotate(360deg); } }
   @keyframes drift  { to { left: calc(100vw + 40px); } }
@@ -194,7 +206,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .cloud.c1 { left: 6vw; } .cloud.c2 { left: 55vw; } .cloud.c3 { left: 30vw; } .ship { left: 12vw; } .gull, .bubbles { display: none; }
+    .cloud.c1 { left: 6vw; } .cloud.c2 { left: 55vw; } .cloud.c3 { left: 30vw; } .ship { left: 12vw; } .gull, .bubbles, .fishes { display: none; }
   }
 </style>
 </head>
@@ -222,6 +234,46 @@
     <div class="waves w2"></div>
     <div class="waves w3"></div>
     <div class="bubbles"></div>
+    <div class="fishes">
+      <!-- Mackerel -->
+      <div class="fish" style="top:38%;width:120px;height:46px;--t:26s;--delay:-6s"><svg viewBox="0 0 120 46">
+        <path d="M6 23 L24 8 L22 23 L24 38 Z" fill="#3C7FA6" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M20 23 Q50 2 94 14 Q114 20 114 23 Q114 28 94 32 Q50 44 20 23 Z" fill="#7FB8D6" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M34 16 L44 20 M46 12 L56 18 M58 11 L68 17 M70 11 L80 17" stroke="#2B1B0E" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M30 26 Q64 34 106 26" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+        <circle cx="98" cy="21" r="4" fill="#fff" stroke="#2B1B0E" stroke-width="2"/><circle cx="99" cy="21" r="1.8" fill="#2B1B0E"/></svg></div>
+      <!-- Red snapper -->
+      <div class="fish rev" style="top:62%;width:110px;height:62px;--t:34s;--delay:-14s"><svg viewBox="0 0 110 62">
+        <path d="M6 31 L26 12 L24 31 L26 50 Z" fill="#C2423B" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M44 14 Q58 2 72 10 L66 18 Z" fill="#C2423B" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M22 31 Q44 6 84 14 Q104 22 104 32 Q102 44 84 48 Q44 56 22 31 Z" fill="#E86A5C" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M90 36 Q96 38 100 36" fill="none" stroke="#2B1B0E" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="88" cy="26" r="4" fill="#fff" stroke="#2B1B0E" stroke-width="2"/><circle cx="89" cy="26" r="1.8" fill="#2B1B0E"/></svg></div>
+      <!-- Pufferfish -->
+      <div class="fish" style="top:80%;width:74px;height:62px;--t:40s;--delay:-24s"><svg viewBox="0 0 74 62">
+        <path d="M4 31 L16 22 L16 40 Z" fill="#E3B13C" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="40" cy="31" r="24" fill="#F3D37A" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M40 4 L40 9 M22 10 L25 14 M58 10 L55 14 M64 31 L68 31 M60 48 L63 51 M40 55 L40 59 M20 50 L23 47" stroke="#2B1B0E" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M24 38 Q40 50 56 38" fill="#fff" opacity=".6"/>
+        <circle cx="52" cy="26" r="4" fill="#fff" stroke="#2B1B0E" stroke-width="2"/><circle cx="53" cy="26" r="1.8" fill="#2B1B0E"/><circle cx="61" cy="34" r="2.5" fill="#2B1B0E"/></svg></div>
+      <!-- Sardine school -->
+      <div class="fish rev" style="top:22%;width:150px;height:60px;--t:22s;--delay:-3s"><svg viewBox="0 0 150 60">
+        <g fill="#CFDDE6" stroke="#2B1B0E" stroke-width="2.5" stroke-linejoin="round">
+          <path d="M4 14 L14 7 L13 14 L14 21 Z M12 14 Q30 5 52 12 Q56 14 52 16 Q30 23 12 14 Z"/>
+          <path d="M44 34 L54 27 L53 34 L54 41 Z M52 34 Q70 25 92 32 Q96 34 92 36 Q70 43 52 34 Z"/>
+          <path d="M84 16 L94 9 L93 16 L94 23 Z M92 16 Q110 7 132 14 Q136 16 132 18 Q110 25 92 16 Z"/>
+          <path d="M20 48 L30 41 L29 48 L30 55 Z M28 48 Q46 39 68 46 Q72 48 68 50 Q46 57 28 48 Z"/>
+        </g>
+        <g fill="#2B1B0E"><circle cx="46" cy="13" r="1.8"/><circle cx="86" cy="33" r="1.8"/><circle cx="126" cy="15" r="1.8"/><circle cx="62" cy="47" r="1.8"/></g>
+      </svg></div>
+      <!-- Yellow tang -->
+      <div class="fish" style="top:52%;width:80px;height:64px;--t:30s;--delay:-19s"><svg viewBox="0 0 80 64">
+        <path d="M6 32 L20 20 L18 32 L20 44 Z" fill="#F2C230" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M18 32 Q22 4 48 6 Q70 12 74 32 Q70 52 48 58 Q22 60 18 32 Z" fill="#FFD84A" stroke="#2B1B0E" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M70 30 L78 28" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/>
+        <path d="M26 20 Q40 14 56 18 M26 44 Q40 50 56 46" fill="none" stroke="#E0A800" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="60" cy="26" r="4" fill="#fff" stroke="#2B1B0E" stroke-width="2"/><circle cx="61" cy="26" r="1.8" fill="#2B1B0E"/></svg></div>
+    </div>
   </div>
 </div>
 
