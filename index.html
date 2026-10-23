@@ -10,23 +10,24 @@
 <style>
   /* Theme: bright sea adventure. Sky blue, straw yellow, red, parchment */
   :root {
-    --sky:#3BB4EA; --sky-low:#8FDBF7; --sea:#0B5A9C; --deep:#073763;
+    --sky:#3BB4EA; --sky-low:#8FDBF7; --sea:#0B5A9C; --deep:#073763; --abyss:#05263F;
     --straw:#FFC928; --red:#D7263D; --paper:#FFF1D0; --paper-edge:#E9C98A;
     --ink:#2B1B0E; --muted:#6A4E31;
+    --workout:#2BB673; --rest:#3B8FE0;
     --horizon: 58vh;
+    --rise: 0;
   }
   * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
+  html, body { margin: 0; }
   body {
     color: var(--ink); font: 500 18px/1.6 "Nunito", system-ui, sans-serif;
-    display: grid; place-items: center; padding: 24px;
     min-height: 100svh; overflow-x: hidden;
-    background: var(--deep);
+    background: var(--abyss);
   }
 
-  /* ---------- Scene ---------- */
+  /* ---------- Scene (fixed behind everything) ---------- */
   .scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-           background: linear-gradient(180deg, var(--sky) 0%, var(--sky-low) var(--horizon), var(--sea) var(--horizon), var(--deep) 100%); }
+           background: linear-gradient(180deg, var(--sky) 0%, var(--sky-low) var(--horizon)); }
 
   .sun { position: absolute; top: 7vh; right: 9vw; width: 110px; height: 110px; }
   .sun-core { position: absolute; inset: 22px; border-radius: 50%; background: #FFE27A; border: 4px solid var(--ink); }
@@ -45,79 +46,155 @@
   .gull.g1 { top: 30vh; animation-delay: -4s; }
   .gull.g2 { top: 34vh; animation-delay: -6s; transform: scale(.75); }
 
-  .ship { position: absolute; top: calc(var(--horizon) - 62px); left: -140px; width: 110px; height: 80px;
+  /* The sea: its surface rises from the horizon to the top of the screen as you scroll */
+  .sea {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    top: calc(var(--horizon) * (1 - var(--rise)) - 120px * var(--rise));
+    background: linear-gradient(180deg, var(--sea) 0%, var(--deep) 45%, var(--abyss) 100%);
+  }
+  .sea::after { /* darkens as it rises */
+    content: ""; position: absolute; inset: 0; background: var(--abyss); opacity: calc(var(--rise) * .55);
+  }
+  .ship { position: absolute; top: -62px; left: -140px; width: 110px; height: 80px;
           animation: sail 75s linear infinite; animation-delay: -20s; }
   .ship svg { width: 100%; height: 100%; animation: bob 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
 
-  .waves { position: absolute; left: 0; right: 0; height: 40px; background-repeat: repeat-x; background-size: 160px 40px; }
-  .waves.w1 { top: calc(var(--horizon) - 12px); opacity: .9; animation: roll 9s linear infinite;
+  .waves { position: absolute; left: 0; right: 0; height: 40px; background-repeat: repeat-x; background-size: 160px 40px; z-index: 1; }
+  .waves.w1 { top: -12px; animation: roll 9s linear infinite;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 6 40 20 T80 20 T120 20 T160 20 V40 H0Z' fill='%230B5A9C'/%3E%3Cpath d='M0 20 Q20 6 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E"); }
-  .waves.w2 { top: calc(var(--horizon) + 70px); opacity: .35; animation: roll 14s linear infinite reverse;
+  .waves.w2 { top: 70px; opacity: .3; animation: roll 14s linear infinite reverse;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 8 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3C/svg%3E"); }
-  .waves.w3 { top: calc(var(--horizon) + 190px); opacity: .22; animation: roll 20s linear infinite;
+  .waves.w3 { top: 190px; opacity: .18; animation: roll 20s linear infinite;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 20 Q20 8 40 20 T80 20 T120 20 T160 20' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3C/svg%3E"); }
 
-  @keyframes spin  { to { transform: rotate(360deg); } }
-  @keyframes drift { to { left: calc(100vw + 40px); } }
-  @keyframes glide { from { left: 105vw; } to { left: -60px; } }
-  @keyframes flap  { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
-  @keyframes sail  { to { left: calc(100vw + 40px); } }
-  @keyframes bob   { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(5px) rotate(3deg); } }
-  @keyframes roll  { to { background-position-x: 160px; } }
+  .bubbles { position: absolute; inset: 0; opacity: var(--rise); }
+  .bubbles i { position: absolute; bottom: -20px; width: var(--s); height: var(--s); border-radius: 50%;
+               border: 2px solid rgba(255,255,255,.35); animation: bubble var(--d) linear infinite; animation-delay: var(--delay); }
 
-  /* ---------- Card ---------- */
-  main {
-    max-width: 36rem; position: relative; z-index: 1;
+  @keyframes spin   { to { transform: rotate(360deg); } }
+  @keyframes drift  { to { left: calc(100vw + 40px); } }
+  @keyframes glide  { from { left: 105vw; } to { left: -60px; } }
+  @keyframes flap   { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+  @keyframes sail   { to { left: calc(100vw + 40px); } }
+  @keyframes bob    { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(5px) rotate(3deg); } }
+  @keyframes roll   { to { background-position-x: 160px; } }
+  @keyframes bubble { to { transform: translateY(-110vh) translateX(20px); } }
+
+  /* ---------- Hero card ---------- */
+  .hero { position: relative; z-index: 1; min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+  .card {
+    max-width: 36rem; position: relative;
     background: var(--paper);
     border: 4px solid var(--ink);
     border-radius: 6px;
     padding: clamp(24px, 6vw, 40px);
     box-shadow: 8px 8px 0 var(--ink);
+  }
+  .card::before { /* pin */
+    content: ""; position: absolute; top: -12px; left: 50%; width: 22px; height: 22px; margin-left: -11px;
+    border-radius: 50%; background: var(--red); border: 3px solid var(--ink);
+  }
+  .hero .card {
     transform: perspective(900px) rotate(var(--tilt, -1deg)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition: transform .25s ease-out;
     animation: drop .9s cubic-bezier(.2,.9,.3,1.35) both;
   }
-  main::before { /* pin */
-    content: ""; position: absolute; top: -12px; left: 50%; width: 22px; height: 22px; margin-left: -11px;
-    border-radius: 50%; background: var(--red); border: 3px solid var(--ink);
-  }
   @keyframes drop { from { opacity: 0; transform: translateY(-60vh) rotate(-12deg); } 70% { opacity: 1; } to { transform: rotate(-1deg); } }
 
-  p.kicker {
+  .card p.kicker {
     display: inline-block; font: 400 1.15rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .08em;
     color: #fff; background: var(--red); border: 3px solid var(--ink);
     padding: 7px 14px 5px; border-radius: 999px; margin: 0 0 18px;
     animation: pop .5s .7s cubic-bezier(.3,1.6,.5,1) both;
   }
-  h1 {
-    font: 400 clamp(3rem, 13vw, 5.2rem)/.95 "Bangers", "Impact", sans-serif; letter-spacing: .03em;
+  .comic {
+    font-family: "Bangers", "Impact", sans-serif; font-weight: 400; letter-spacing: .03em;
     color: var(--straw);
     -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill;
     text-shadow: 5px 5px 0 var(--ink);
-    margin: 0 0 20px;
   }
+  h1 { font-size: clamp(3rem, 13vw, 5.2rem); line-height: .95; margin: 0 0 20px; }
   h1 .w { display: inline-block; animation: pop .55s cubic-bezier(.3,1.7,.5,1) both; }
   h1 .w:hover { animation: jiggle .4s ease-in-out; }
   @keyframes pop { from { opacity: 0; transform: scale(.2) rotate(-10deg); } to { opacity: 1; transform: none; } }
   @keyframes jiggle { 25% { transform: rotate(-6deg) scale(1.08); } 75% { transform: rotate(5deg) scale(1.08); } }
 
-  p { color: var(--muted); margin: 0; font-weight: 700; }
-  main > p:not(.kicker) { animation: rise .6s 1.4s ease-out both; }
+  .card p { color: var(--muted); margin: 0; font-weight: 700; }
+  .hero .card > p:not(.kicker) { animation: rise .6s 1.4s ease-out both; }
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  footer {
+  .card footer {
     margin-top: 28px; padding-top: 14px; border-top: 3px dashed var(--paper-edge);
     font-size: .9rem; font-weight: 700; color: var(--muted);
   }
 
+  .scroll-cue {
+    position: absolute; bottom: 22px; left: 50%; width: 46px; height: 46px; margin-left: -23px;
+    border-radius: 50%; background: var(--straw); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    display: grid; place-items: center; animation: cue 1.6s ease-in-out infinite; transition: opacity .3s;
+  }
+  .scroll-cue svg { width: 22px; height: 22px; }
+  @keyframes cue { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+  /* ---------- Tracker ---------- */
+  .tracker { position: relative; z-index: 1; min-height: 100svh; display: grid; place-items: center; padding: 72px 16px 56px; }
+  .tracker .card { width: 100%; max-width: 40rem; }
+  .tracker h2 { font-size: clamp(2.4rem, 9vw, 3.4rem); line-height: 1; margin: 0 0 18px; text-shadow: 4px 4px 0 var(--ink); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 22px; }
+  .stat { border: 3px solid var(--ink); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  .stat b { display: block; font: 400 2rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .03em; }
+  .stat span { font-size: .85rem; font-weight: 800; color: var(--muted); }
+  .stat.workout b { color: var(--workout); }
+  .stat.rest b { color: var(--rest); }
+  .stat.streak b { color: var(--red); }
+
+  .month { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .month h3 { margin: 0; font: 400 1.7rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .04em; }
+  .month button {
+    width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--ink); background: var(--straw);
+    box-shadow: 2px 2px 0 var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0;
+  }
+  .month button svg { width: 18px; height: 18px; }
+  .month button:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+  .month button:disabled { opacity: .3; cursor: default; }
+  button:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+
+  .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .weekdays { margin-bottom: 6px; }
+  .weekdays span { text-align: center; font-size: .8rem; font-weight: 800; color: var(--muted); }
+  .day {
+    aspect-ratio: 1; border-radius: 9px; border: 2px solid rgba(43,27,14,.18);
+    display: grid; place-items: center; font-weight: 800; font-size: .95rem; color: var(--muted);
+    background: rgba(255,255,255,.5);
+  }
+  .day.blank { border: 0; background: none; }
+  .day.future { opacity: .35; }
+  .day.workout { background: var(--workout); color: #fff; border: 3px solid var(--ink); }
+  .day.rest { background: var(--rest); color: #fff; border: 3px solid var(--ink); }
+  .day.today { box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--red); }
+  .day.fill { animation: pop .4s cubic-bezier(.3,1.7,.5,1) both; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 18px 0 0; font-size: .9rem; font-weight: 800; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend i { width: 16px; height: 16px; border-radius: 5px; border: 2px solid var(--ink); }
+  .legend .lw { background: var(--workout); }
+  .legend .lr { background: var(--rest); }
+  .legend .ln { background: rgba(255,255,255,.5); border-color: rgba(43,27,14,.3); }
+  .empty-note { margin: 14px 0 0; font-size: .95rem; font-weight: 700; color: var(--muted); }
+
   @media (max-width: 480px) {
-    main { --tilt: 0deg; box-shadow: 5px 5px 0 var(--ink); }
+    .hero .card { --tilt: 0deg; box-shadow: 5px 5px 0 var(--ink); }
     .sun { width: 80px; height: 80px; top: 4vh; right: 6vw; }
     .sun-core { inset: 16px; }
     .sun-rays i { transform-origin: 50% 40px; height: 14px; }
+    .weekdays, .days { gap: 4px; }
+    .day { font-size: .85rem; border-radius: 7px; }
+    .stat { padding: 8px; }
+    .stat b { font-size: 1.6rem; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .cloud.c1 { left: 6vw; } .cloud.c2 { left: 55vw; } .cloud.c3 { left: 30vw; } .ship { left: 12vw; } .gull { display: none; }
+    .cloud.c1 { left: 6vw; } .cloud.c2 { left: 55vw; } .cloud.c3 { left: 30vw; } .ship { left: 12vw; } .gull, .bubbles { display: none; }
   }
 </style>
 </head>
@@ -132,57 +209,173 @@
   <div class="gull g1"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
   <div class="gull g2"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
 
-  <div class="ship"><svg viewBox="0 0 110 80">
-    <line x1="55" y1="6" x2="55" y2="58" stroke="#2B1B0E" stroke-width="4"/>
-    <path d="M55 8 Q86 22 82 50 L58 50 Z" fill="#fff" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
-    <path d="M52 16 Q30 30 32 50 L52 50 Z" fill="#FFC928" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
-    <path d="M55 6 L70 10 L55 14 Z" fill="#D7263D" stroke="#2B1B0E" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M10 56 L100 56 Q94 74 74 74 L34 74 Q16 74 10 56 Z" fill="#B5652B" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/>
-    <line x1="22" y1="64" x2="90" y2="64" stroke="#2B1B0E" stroke-width="2.5"/>
-  </svg></div>
-
-  <div class="waves w1"></div>
-  <div class="waves w2"></div>
-  <div class="waves w3"></div>
+  <div class="sea">
+    <div class="ship"><svg viewBox="0 0 110 80">
+      <line x1="55" y1="6" x2="55" y2="58" stroke="#2B1B0E" stroke-width="4"/>
+      <path d="M55 8 Q86 22 82 50 L58 50 Z" fill="#fff" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M52 16 Q30 30 32 50 L52 50 Z" fill="#FFC928" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M55 6 L70 10 L55 14 Z" fill="#D7263D" stroke="#2B1B0E" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M10 56 L100 56 Q94 74 74 74 L34 74 Q16 74 10 56 Z" fill="#B5652B" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/>
+      <line x1="22" y1="64" x2="90" y2="64" stroke="#2B1B0E" stroke-width="2.5"/>
+    </svg></div>
+    <div class="waves w1"></div>
+    <div class="waves w2"></div>
+    <div class="waves w3"></div>
+    <div class="bubbles"></div>
+  </div>
 </div>
 
-<main>
-  <p class="kicker">Daily fitness journal</p>
-  <h1>Welcome, I'm Paulson.</h1>
-  <p>This is where I'll share my daily training: what I did, why I did it, and what it's getting me. Full log coming soon.</p>
-  <footer>Test page · hosted on Vercel</footer>
-</main>
+<section class="hero">
+  <main class="card">
+    <p class="kicker">Daily fitness journal</p>
+    <h1 class="comic">Welcome, I'm Paulson.</h1>
+    <p>This is where I'll share my daily training: what I did, why I did it, and what it's getting me. Full log coming soon.</p>
+    <footer>Test page · hosted on Vercel</footer>
+  </main>
+  <a class="scroll-cue" href="#tracker" aria-label="Scroll to the training tracker">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>
+  </a>
+</section>
+
+<section class="tracker" id="tracker" aria-labelledby="tracker-title">
+  <div class="card">
+    <h2 class="comic" id="tracker-title">Training tracker</h2>
+
+    <div class="stats">
+      <div class="stat workout"><b id="s-workout">0</b><span>Workouts</span></div>
+      <div class="stat rest"><b id="s-rest">0</b><span>Rest days</span></div>
+      <div class="stat streak"><b id="s-streak">0</b><span>Day streak</span></div>
+    </div>
+
+    <div class="month">
+      <button type="button" id="prev" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h3 id="month-label" aria-live="polite">—</h3>
+      <button type="button" id="next" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    <div class="days" id="days" role="list"></div>
+
+    <div class="legend">
+      <span><i class="lw"></i>Workout</span>
+      <span><i class="lr"></i>Rest day</span>
+      <span><i class="ln"></i>Not logged</span>
+    </div>
+    <p class="empty-note" id="empty-note" hidden>No days logged yet. Each day gets colored here as it's logged.</p>
+  </div>
+</section>
 
 <script>
+(() => {
+  const root = document.documentElement;
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // Sun rays
   const rays = document.querySelector(".sun-rays");
-  for (let i = 0; i < 12; i++) {
-    const r = document.createElement("i");
-    r.style.transform = `rotate(${i * 30}deg)`;
-    rays.appendChild(r);
+  for (let i = 0; i < 12; i++) { const r = document.createElement("i"); r.style.transform = `rotate(${i * 30}deg)`; rays.appendChild(r); }
+
+  // Bubbles (visible once the sea covers the screen)
+  const bubbles = document.querySelector(".bubbles");
+  for (let i = 0; i < 14; i++) {
+    const b = document.createElement("i");
+    b.style.left = (Math.random() * 100).toFixed(1) + "%";
+    b.style.setProperty("--s", (6 + Math.random() * 14).toFixed(0) + "px");
+    b.style.setProperty("--d", (9 + Math.random() * 10).toFixed(1) + "s");
+    b.style.setProperty("--delay", (-Math.random() * 18).toFixed(1) + "s");
+    bubbles.appendChild(b);
   }
 
   // Heading pops in word by word (screen readers still get the full sentence)
   const h1 = document.querySelector("h1");
   const words = h1.textContent.trim().split(/\s+/);
   h1.setAttribute("aria-label", h1.textContent.trim());
-  h1.innerHTML = words.map((w, i) =>
-    `<span class="w" aria-hidden="true" style="animation-delay:${0.85 + i * 0.12}s">${w}</span>`).join(" ");
+  h1.innerHTML = words.map((w, i) => `<span class="w" aria-hidden="true" style="animation-delay:${0.85 + i * 0.12}s">${w}</span>`).join(" ");
+
+  // Sea rises with scroll
+  const cue = document.querySelector(".scroll-cue");
+  let ticking = false;
+  const onScroll = () => {
+    const rise = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.75)));
+    root.style.setProperty("--rise", rise.toFixed(3));
+    cue.style.opacity = rise > 0.15 ? 0 : 1;
+    ticking = false;
+  };
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  addEventListener("resize", onScroll);
+  onScroll();
 
   // Card tilts toward the pointer on desktop
-  const card = document.querySelector("main");
-  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const card = document.querySelector(".hero .card");
   if (!calm && matchMedia("(pointer: fine)").matches) {
     card.addEventListener("animationend", (e) => {
       if (e.target !== card) return;
       card.style.animation = "none";
-      window.addEventListener("pointermove", (ev) => {
+      addEventListener("pointermove", (ev) => {
         const x = ev.clientX / innerWidth - 0.5, y = ev.clientY / innerHeight - 0.5;
         card.style.setProperty("--ry", (x * 10).toFixed(2) + "deg");
         card.style.setProperty("--rx", (-y * 8).toFixed(2) + "deg");
       });
     });
   }
+
+  // ---------- Tracker ----------
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let log = {};
+  let view = new Date(today.getFullYear(), today.getMonth(), 1);
+  let firstMonth = new Date(view);
+  let animated = false;
+
+  function streak() {
+    let d = new Date(today), n = 0;
+    if (!log[iso(d)]) d.setDate(d.getDate() - 1);
+    while (log[iso(d)]) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+
+  function render() {
+    const y = view.getFullYear(), m = view.getMonth();
+    document.getElementById("month-label").textContent = view.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+    document.getElementById("prev").disabled = view <= firstMonth;
+    document.getElementById("next").disabled = y === today.getFullYear() && m === today.getMonth();
+
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;     // Monday-first
+    const count = new Date(y, m + 1, 0).getDate();
+    let html = "", w = 0, r = 0;
+    for (let i = 0; i < lead; i++) html += `<span class="day blank" aria-hidden="true"></span>`;
+    for (let day = 1; day <= count; day++) {
+      const dt = new Date(y, m, day), key = iso(dt), status = log[key];
+      if (status === "workout") w++;
+      if (status === "rest") r++;
+      const cls = ["day", status || "", dt > today ? "future" : "", +dt === +today ? "today" : "", status && !animated ? "fill" : ""].join(" ");
+      const label = `${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${status === "workout" ? "workout" : status === "rest" ? "rest day" : dt > today ? "upcoming" : "not logged"}`;
+      html += `<span class="${cls}" role="listitem" aria-label="${label}" style="animation-delay:${(day * 0.02).toFixed(2)}s">${day}</span>`;
+    }
+    document.getElementById("days").innerHTML = html;
+    document.getElementById("s-workout").textContent = w;
+    document.getElementById("s-rest").textContent = r;
+  }
+
+  document.getElementById("prev").addEventListener("click", () => { view.setMonth(view.getMonth() - 1); render(); });
+  document.getElementById("next").addEventListener("click", () => { view.setMonth(view.getMonth() + 1); render(); });
+
+  // Fill the calendar with a pop when the tracker first comes into view
+  const tracker = document.getElementById("tracker");
+  new IntersectionObserver((entries, obs) => {
+    if (entries[0].isIntersecting) { render(); animated = true; obs.disconnect(); }
+  }, { threshold: 0.3 }).observe(tracker);
+
+  fetch("data/log.json", { cache: "no-cache" })
+    .then((r) => r.json())
+    .then((data) => {
+      log = data.days || {};
+      const dates = Object.keys(log).sort();
+      if (dates.length) { const [fy, fm] = dates[0].split("-").map(Number); firstMonth = new Date(fy, fm - 1, 1); }
+      document.getElementById("empty-note").hidden = dates.length > 0;
+      document.getElementById("s-streak").textContent = streak();
+      render();
+    })
+    .catch(() => { document.getElementById("empty-note").hidden = false; render(); });
+})();
 </script>
 </body>
 </html>
