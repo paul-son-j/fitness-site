@@ -697,6 +697,8 @@
   }
   function setsSummary(sets) {
     if (!sets || !sets.length) return { what: "Done", more: "" };
+    const bare = sets.every((st) => st.reps == null && st.sec == null && !st.kg);
+    if (bare) return { what: `${sets.length} ${sets.length === 1 ? "set" : "sets"}`, more: "" };
     const texts = sets.map(setText);
     const same = texts.every((t) => t === texts[0]);
     const n = sets.length;

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-26T06:53:00+05:30",
+  "updated_at": "2026-10-26T09:20:00+05:30",
   "days": {
     "2026-10-23": {
       "status": "workout",
@@ -91,6 +91,113 @@
       "mood": "Quite a bit happy",
       "mood_score": 5,
       "note": "No workout today. A 15-minute jog and 15 minutes of cardio; rested most of the day."
+    },
+    "2026-10-26": {
+      "status": "workout",
+      "focus": "Back and chest: upper chest and upper back strength",
+      "exercises": [
+        {
+          "name": "Incline chest press",
+          "sets": [
+            {
+              "reps": 5,
+              "kg": 50
+            },
+            {
+              "reps": 5,
+              "kg": 50
+            },
+            {
+              "reps": 5,
+              "kg": 50
+            },
+            {
+              "reps": 5,
+              "kg": 50
+            },
+            {
+              "reps": 5,
+              "kg": 50
+            }
+          ],
+          "note": "Pushed up to a max of 50 kg."
+        },
+        {
+          "name": "Weighted pull-up",
+          "sets": [
+            {
+              "reps": 5,
+              "kg": 15
+            },
+            {
+              "reps": 5,
+              "kg": 15
+            },
+            {
+              "reps": 5,
+              "kg": 15
+            },
+            {
+              "reps": 5,
+              "kg": 15
+            },
+            {
+              "reps": 5,
+              "kg": 15
+            }
+          ],
+          "note": "15 kg added."
+        },
+        {
+          "name": "Chest fly",
+          "sets": [
+            {},
+            {},
+            {}
+          ],
+          "note": "Moderate weight."
+        },
+        {
+          "name": "Incline seated upper back row",
+          "sets": [
+            {},
+            {},
+            {}
+          ]
+        },
+        {
+          "name": "Low-to-high cable fly (upper chest)",
+          "sets": [
+            {},
+            {},
+            {}
+          ]
+        },
+        {
+          "name": "Behind-the-head lat pulldown",
+          "sets": [
+            {},
+            {},
+            {}
+          ]
+        },
+        {
+          "name": "Landmine (obliques)",
+          "sets": []
+        },
+        {
+          "name": "Oblique raises",
+          "sets": []
+        },
+        {
+          "name": "Oblique plank",
+          "sets": []
+        }
+      ],
+      "sleep_h": 6,
+      "mood": "Pretty normal",
+      "mood_score": 3,
+      "note": "Back and chest session focused on strength, mainly upper chest and upper back, finished with core work for the obliques."
     }
   }
 }
