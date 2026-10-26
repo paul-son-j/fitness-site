@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-26T09:20:00+05:30",
+  "updated_at": "2026-10-26T09:22:00+05:30",
   "days": {
     "2026-10-23": {
       "status": "workout",
@@ -119,8 +119,7 @@
               "reps": 5,
               "kg": 50
             }
-          ],
-          "note": "Pushed up to a max of 50 kg."
+          ]
         },
         {
           "name": "Weighted pull-up",
@@ -183,15 +182,27 @@
         },
         {
           "name": "Landmine (obliques)",
-          "sets": []
+          "sets": [
+            {},
+            {},
+            {}
+          ]
         },
         {
           "name": "Oblique raises",
-          "sets": []
+          "sets": [
+            {},
+            {},
+            {}
+          ]
         },
         {
           "name": "Oblique plank",
-          "sets": []
+          "sets": [
+            {},
+            {},
+            {}
+          ]
         }
       ],
       "sleep_h": 6,
