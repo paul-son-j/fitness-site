@@ -25,6 +25,7 @@
     --sky:#3BB4EA; --sky-low:#8FDBF7; --sea:#0B5A9C; --deep:#073763; --abyss:#05263F;
     --straw:#FFC928; --red:#D7263D; --paper:#FFF1D0; --paper-edge:#E9C98A;
     --ink:#2B1B0E; --muted:#6A4E31;
+    --text:#2B1B0E; --on-straw:#2B1B0E; --surface:#FFFFFF; --empty:rgba(255,255,255,.5); --cloud:#FFFFFF;
     --workout:#2BB673; --rest:#3B8FE0;
     --horizon: 58vh;
     --rise: 0;
@@ -32,7 +33,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    color: var(--ink); font: 500 18px/1.6 "Nunito", system-ui, sans-serif;
+    color: var(--text); font: 500 18px/1.6 "Nunito", system-ui, sans-serif;
     min-height: 100svh; overflow-x: hidden;
     background: var(--abyss);
   }
@@ -41,7 +42,70 @@
   .scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
            background: linear-gradient(180deg, var(--sky) 0%, var(--sky-low) var(--horizon)); }
 
-  .sun { position: absolute; top: 7vh; right: 9vw; width: 110px; height: 110px; }
+  .sky-toggle { position: absolute; top: 7vh; right: 9vw; width: 110px; height: 110px;
+                border: 0; padding: 0; background: none; cursor: pointer; pointer-events: auto; border-radius: 50%;
+                transition: transform .2s; -webkit-tap-highlight-color: transparent; }
+  .sky-toggle:hover { transform: scale(1.07); }
+  .sky-toggle:focus-visible { outline: 3px dashed #fff; outline-offset: 4px; }
+  .sun { position: absolute; inset: 0;
+         transition: transform 1.1s cubic-bezier(.3,.1,.3,1) .55s, opacity .3s .55s; }
+  .moon { position: absolute; inset: 18px; border-radius: 50%; background: #F6F0CF; border: 4px solid #2B1B0E;
+          box-shadow: 0 0 0 10px rgba(246,240,207,.10), 0 0 46px 14px rgba(246,240,207,.35);
+          transform: translate(10vw, 60vh) rotate(-60deg); opacity: 0;
+          transition: transform 1s cubic-bezier(.6,0,.8,.4), opacity .2s .8s; }
+  .moon i { position: absolute; border-radius: 50%; background: #E2D8A8; border: 2.5px solid rgba(43,27,14,.35); }
+  .moon i:nth-child(1) { width: 18px; height: 18px; left: 16px; top: 18px; }
+  .moon i:nth-child(2) { width: 11px; height: 11px; left: 44px; top: 40px; }
+  .moon i:nth-child(3) { width: 8px; height: 8px; left: 22px; top: 48px; }
+  html.night .sun { transform: translate(-12vw, 62vh) rotate(140deg); opacity: 0;
+                    transition: transform 1s cubic-bezier(.6,0,.8,.4), opacity .2s .8s; }
+  html.night .moon { transform: none; opacity: 1;
+                     transition: transform 1.1s cubic-bezier(.3,.1,.3,1) .55s, opacity .3s .55s; }
+
+  /* Night sky, stars and moonlight */
+  .night-sky { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s ease;
+               background: linear-gradient(180deg, #08122B 0%, #16244F 35%, #3A3C78 var(--horizon)); }
+  .stars i { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: #FFF6D8;
+             box-shadow: 0 0 6px rgba(255,246,216,.8); animation: twinkle var(--d) ease-in-out infinite; animation-delay: var(--delay); }
+  .stars i.big { background: none; box-shadow: none; width: 14px; height: 14px; }
+  .stars i.big::before, .stars i.big::after { content: ""; position: absolute; left: 50%; top: 50%; background: #FFF6D8; border-radius: 2px; }
+  .stars i.big::before { width: 3px; height: 14px; margin: -7px 0 0 -1.5px; }
+  .stars i.big::after { width: 14px; height: 3px; margin: -1.5px 0 0 -7px; }
+  @keyframes twinkle { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
+  .night-tint { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s ease;
+                background: linear-gradient(180deg, #123A6B 0%, #0A2348 40%, #04122A 100%); }
+  .moonlight { position: absolute; top: 18px; right: calc(9vw + 10px); width: 90px; height: 150px; opacity: 0; transition: opacity 1.4s ease .6s;
+               background: repeating-linear-gradient(180deg, rgba(246,240,207,.75) 0 4px, transparent 4px 16px);
+               -webkit-mask-image: linear-gradient(180deg, #000, transparent); mask-image: linear-gradient(180deg, #000, transparent);
+               clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); animation: shimmer 2.4s ease-in-out infinite; }
+  @keyframes shimmer { 0%,100% { transform: scaleX(1); } 50% { transform: scaleX(.8); } }
+  .cloud path { fill: var(--cloud); transition: fill 1.2s ease; }
+  .gull { transition: opacity 1s; }
+  .lantern { opacity: 0; transition: opacity 1s .8s; filter: drop-shadow(0 0 6px #FFE27A) drop-shadow(0 0 12px #FFC928); }
+  .waves.w1 { transition: filter 1.4s; }
+
+  html.night .night-sky, html.night .night-tint, html.night .moonlight, html.night .lantern { opacity: 1; }
+  html.night .gull { opacity: 0; }
+  html.night .waves.w1 { filter: brightness(.62) saturate(.85); }
+
+  /* Night palette */
+  html.night {
+    --paper:#1C2846; --paper-edge:#3B4C79; --ink:#060A15; --muted:#B4C1E0;
+    --text:#F1F4FF; --surface:#273760; --empty:rgba(255,255,255,.07); --cloud:#7383AE; --red:#FF5A6E; --abyss:#030D1C;
+  }
+  .card, .card *, body { transition: background-color .9s ease, color .9s ease, border-color .9s ease, box-shadow .9s ease; }
+  .hero .card { transition: transform .25s ease-out, background-color .9s ease, border-color .9s ease, box-shadow .9s ease; }
+  button.day { transition: transform .12s, background-color .9s ease, color .9s ease, border-color .9s ease; }
+  html.night .icon-btn svg { stroke: var(--text); }
+  html.night .mood-chart text[fill="#6A4E31"] { fill: var(--muted); }
+  html.night .mood-chart text[fill="#2B8A57"] { fill: #74E3A8; }
+  html.night .mood-chart polyline { stroke: var(--text); }
+  html.night .mood-chart line[stroke="#2B1B0E"] { stroke: #FFFFFF; }
+  /* Let taps on empty space reach the sun/moon behind the sections */
+  .hero, .tracker { pointer-events: none; }
+  .hero > *, .tracker > * { pointer-events: auto; }
+  html.no-anim *, html.no-anim *::before, html.no-anim *::after { transition: none !important; }
+  .sun-core, .sun-rays { display: block; }
   .sun-core { position: absolute; inset: 22px; border-radius: 50%; background: #FFE27A; border: 4px solid var(--ink); }
   .sun-rays { position: absolute; inset: 0; animation: spin 40s linear infinite; }
   .sun-rays i { position: absolute; left: 50%; top: 0; width: 8px; height: 18px; margin-left: -4px; border-radius: 4px;
@@ -165,7 +229,7 @@
   .tracker h2 { font-size: clamp(2.4rem, 9vw, 3.4rem); line-height: 1; margin: 0 0 18px; text-shadow: 4px 4px 0 var(--ink); }
 
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 22px; }
-  .stat { border: 3px solid var(--ink); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  .stat { border: 3px solid var(--ink); border-radius: 10px; padding: 10px 12px; background: var(--surface); }
   .stat b { display: block; font: 400 2rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .03em; }
   .stat span { font-size: .85rem; font-weight: 800; color: var(--muted); }
   .stat.workout b { color: var(--workout); }
@@ -189,7 +253,7 @@
   .day {
     aspect-ratio: 1; border-radius: 9px; border: 2px solid rgba(43,27,14,.18);
     display: grid; place-items: center; font-weight: 800; font-size: .95rem; color: var(--muted);
-    background: rgba(255,255,255,.5);
+    background: var(--empty);
   }
   .day.blank { border: 0; background: none; }
   .day.future { opacity: .35; }
@@ -203,7 +267,7 @@
   .legend i { width: 16px; height: 16px; border-radius: 5px; border: 2px solid var(--ink); }
   .legend .lw { background: var(--workout); }
   .legend .lr { background: var(--rest); }
-  .legend .ln { background: rgba(255,255,255,.5); border-color: rgba(43,27,14,.3); }
+  .legend .ln { background: var(--empty); border-color: rgba(43,27,14,.3); }
   .empty-note { margin: 14px 0 0; font-size: .95rem; font-weight: 700; color: var(--muted); }
 
   button.day { font: inherit; font-weight: 800; padding: 0; cursor: pointer; transition: transform .12s; }
@@ -214,7 +278,7 @@
   /* ---------- Day panel ---------- */
   html.lock { overflow: hidden; }
   dialog.sheet {
-    border: 0; padding: 0; background: none; color: var(--ink);
+    border: 0; padding: 0; background: none; color: var(--text);
     width: min(36rem, calc(100vw - 32px)); max-height: calc(100svh - 48px); overflow: visible;
   }
   dialog.sheet::backdrop { background: rgba(5, 38, 63, .72); backdrop-filter: blur(3px); }
@@ -228,7 +292,7 @@
            color: #fff; border: 3px solid var(--ink); border-radius: 999px; padding: 6px 12px 4px; }
   .badge.workout { background: var(--workout); }
   .badge.rest { background: var(--rest); }
-  .icon-btn { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 3px solid var(--ink); background: #fff;
+  .icon-btn { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 3px solid var(--ink); background: var(--surface);
               box-shadow: 2px 2px 0 var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; }
   .icon-btn svg { width: 16px; height: 16px; }
   .icon-btn:active { transform: translate(2px, 2px); box-shadow: none; }
@@ -236,7 +300,7 @@
   .sheet .dp-focus { margin: 0 0 16px; font-weight: 800; color: var(--muted); }
 
   .dp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 20px; }
-  .dp-stat { background: #fff; border: 3px solid var(--ink); border-radius: 10px; padding: 8px 10px; }
+  .dp-stat { background: var(--surface); border: 3px solid var(--ink); border-radius: 10px; padding: 8px 10px; }
   .dp-stat b { display: block; font-size: 1.05rem; font-weight: 800; line-height: 1.25; }
   .dp-stat span { font-size: .8rem; font-weight: 800; color: var(--muted); }
 
@@ -245,9 +309,9 @@
   .dp-list { list-style: none; margin: 0; padding: 0; border-top: 2px dashed var(--paper-edge); }
   .dp-list li { padding: 10px 0; border-bottom: 2px dashed var(--paper-edge); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: baseline; }
   .dp-list .name { font-weight: 800; }
-  .dp-list .what { font-weight: 800; color: var(--ink); text-align: right; }
+  .dp-list .what { font-weight: 800; color: var(--text); text-align: right; }
   .dp-list .more { grid-column: 1 / -1; font-size: .9rem; font-weight: 700; color: var(--muted); }
-  .sheet .dp-note { margin: 0; padding: 12px 14px; background: #fff; border: 3px solid var(--ink); border-radius: 10px; font-weight: 700; color: var(--ink); }
+  .sheet .dp-note { margin: 0; padding: 12px 14px; background: var(--surface); border: 3px solid var(--ink); border-radius: 10px; font-weight: 700; color: var(--text); }
 
   button.dp-stat { font: inherit; text-align: left; color: inherit; cursor: pointer; position: relative; padding-right: 26px; }
   button.dp-stat::after { content: "›"; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font: 800 1.4rem/1 "Nunito", sans-serif; color: var(--red); }
@@ -255,36 +319,41 @@
   button.dp-stat:active { transform: translate(2px, 2px); }
   .dp-stat .emo { font-size: 1.3rem; margin-right: 4px; vertical-align: -2px; }
 
-  .back-btn { font: 800 .95rem/1 "Nunito", sans-serif; color: var(--ink); background: #fff; border: 3px solid var(--ink);
+  .back-btn { font: 800 .95rem/1 "Nunito", sans-serif; color: var(--text); background: var(--surface); border: 3px solid var(--ink);
               border-radius: 999px; box-shadow: 2px 2px 0 var(--ink); padding: 8px 14px; cursor: pointer; }
   .back-btn:active { transform: translate(2px, 2px); box-shadow: none; }
   .mood-month { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 14px; }
   .mood-month h3 { margin: 0; font: 400 1.5rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .04em; }
   .mood-month .icon-btn:disabled { opacity: .3; cursor: default; }
   .mood-mix { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px; }
-  .mood-mix div { background: #fff; border: 3px solid var(--ink); border-radius: 10px; text-align: center; padding: 6px 2px; }
+  .mood-mix div { background: var(--surface); border: 3px solid var(--ink); border-radius: 10px; text-align: center; padding: 6px 2px; }
   .mood-mix .emo { display: block; font-size: 1.6rem; line-height: 1.2; }
   .mood-mix b { font-size: 1.05rem; }
   .mood-mix span { display: block; font-size: .72rem; font-weight: 800; color: var(--muted); }
   .mood-mix div.zero { opacity: .4; }
   .mood-mix.four { grid-template-columns: repeat(4, 1fr); }
   .mood-mix.four b { display: block; font-size: 1.15rem; padding-top: 4px; }
-  .mood-chart { background: #fff; border: 3px solid var(--ink); border-radius: 12px; padding: 8px 6px 4px; }
+  .mood-chart { background: var(--surface); border: 3px solid var(--ink); border-radius: 12px; padding: 8px 6px 4px; }
   .mood-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
   .mood-chart .pt { cursor: pointer; }
   .mood-chart .pt:hover circle.dot, .mood-chart .pt:focus-visible circle.dot { r: 8; }
   .mood-chart .pt:focus-visible { outline: none; }
   .mood-chart .pt:focus-visible circle.ring { stroke: var(--red); }
-  .mood-summary { margin: 14px 0 0; font-weight: 800; color: var(--ink); }
+  .mood-summary { margin: 14px 0 0; font-weight: 800; color: var(--text); }
   .dp-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
-  .dp-nav button { flex: 1; font: 800 .95rem/1 "Nunito", sans-serif; color: var(--ink); background: var(--straw);
+  .dp-nav button { flex: 1; font: 800 .95rem/1 "Nunito", sans-serif; color: var(--on-straw); background: var(--straw);
                    border: 3px solid var(--ink); border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); padding: 11px 10px; cursor: pointer; }
   .dp-nav button:disabled { opacity: .35; cursor: default; }
   .dp-nav button:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
 
   @media (max-width: 480px) {
     .hero .card { --tilt: 0deg; box-shadow: 5px 5px 0 var(--ink); }
-    .sun { width: 80px; height: 80px; top: 4vh; right: 6vw; }
+    .sky-toggle { width: 80px; height: 80px; top: 4vh; right: 6vw; }
+    .moon { inset: 12px; }
+    .moon i:nth-child(1) { width: 13px; height: 13px; left: 11px; top: 12px; }
+    .moon i:nth-child(2) { width: 8px; height: 8px; left: 31px; top: 28px; }
+    .moon i:nth-child(3) { width: 6px; height: 6px; left: 15px; top: 34px; }
+    .moonlight { right: calc(6vw + 4px); width: 72px; }
     .sun-core { inset: 16px; }
     .sun-rays i { transform-origin: 50% 40px; height: 14px; }
     .weekdays, .days { gap: 4px; }
@@ -303,17 +372,23 @@
 </style>
 </head>
 <body>
-<div class="scene" aria-hidden="true">
-  <div class="sun"><div class="sun-rays"></div><div class="sun-core"></div></div>
+<div class="scene">
+  <div class="night-sky" aria-hidden="true"><div class="stars"></div></div>
+  <button type="button" class="sky-toggle" id="sky-toggle" aria-pressed="false" aria-label="Switch to night" title="Switch to night">
+    <span class="sun" aria-hidden="true"><span class="sun-rays"></span><span class="sun-core"></span></span>
+    <span class="moon" aria-hidden="true"><i></i><i></i><i></i></span>
+  </button>
 
-  <div class="cloud c1"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
-  <div class="cloud c2"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
-  <div class="cloud c3"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
+  <div aria-hidden="true" class="cloud c1"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
+  <div aria-hidden="true" class="cloud c2"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
+  <div aria-hidden="true" class="cloud c3"><svg viewBox="0 0 220 70"><path d="M30 60 Q8 60 12 44 Q14 30 32 32 Q36 12 60 14 Q74 0 98 10 Q122 2 136 22 Q160 14 170 32 Q196 28 200 46 Q204 60 184 60 Z" fill="#fff" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/></svg></div>
 
-  <div class="gull g1"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
-  <div class="gull g2"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
+  <div aria-hidden="true" class="gull g1"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
+  <div aria-hidden="true" class="gull g2"><svg viewBox="0 0 34 14"><path d="M2 10 Q9 1 17 9 Q25 1 32 10" fill="none" stroke="#2B1B0E" stroke-width="3" stroke-linecap="round"/></svg></div>
 
-  <div class="sea">
+  <div class="sea" aria-hidden="true">
+    <div class="night-tint"></div>
+    <div class="moonlight"></div>
     <div class="ship"><svg viewBox="0 0 110 80">
       <line x1="55" y1="6" x2="55" y2="58" stroke="#2B1B0E" stroke-width="4"/>
       <path d="M55 8 Q86 22 82 50 L58 50 Z" fill="#fff" stroke="#2B1B0E" stroke-width="3.5" stroke-linejoin="round"/>
@@ -321,6 +396,8 @@
       <path d="M55 6 L70 10 L55 14 Z" fill="#D7263D" stroke="#2B1B0E" stroke-width="2.5" stroke-linejoin="round"/>
       <path d="M10 56 L100 56 Q94 74 74 74 L34 74 Q16 74 10 56 Z" fill="#B5652B" stroke="#2B1B0E" stroke-width="4" stroke-linejoin="round"/>
       <line x1="22" y1="64" x2="90" y2="64" stroke="#2B1B0E" stroke-width="2.5"/>
+      <line x1="94" y1="44" x2="94" y2="56" stroke="#2B1B0E" stroke-width="2.5"/>
+      <circle class="lantern" cx="94" cy="47" r="4.5" fill="#FFE27A" stroke="#2B1B0E" stroke-width="2"/>
     </svg></div>
     <div class="waves w1"></div>
     <div class="waves w2"></div>
@@ -452,6 +529,40 @@
   const rays = document.querySelector(".sun-rays");
   for (let i = 0; i < 12; i++) { const r = document.createElement("i"); r.style.transform = `rotate(${i * 30}deg)`; rays.appendChild(r); }
 
+  // Stars for the night sky
+  const stars = document.querySelector(".stars");
+  for (let i = 0; i < 46; i++) {
+    const st = document.createElement("i");
+    if (i % 9 === 0) st.className = "big";
+    st.style.left = (Math.random() * 100).toFixed(1) + "%";
+    st.style.top = (Math.random() * 52).toFixed(1) + "vh";
+    st.style.setProperty("--s", (1.5 + Math.random() * 2.5).toFixed(1) + "px");
+    st.style.setProperty("--d", (2 + Math.random() * 3).toFixed(1) + "s");
+    st.style.setProperty("--delay", (-Math.random() * 4).toFixed(1) + "s");
+    stars.appendChild(st);
+  }
+
+  // Day / night: tap the sun (or moon) to switch; the choice is remembered
+  const toggle = document.getElementById("sky-toggle");
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  function setNight(on, animate) {
+    if (!animate) root.classList.add("no-anim");
+    root.classList.toggle("night", on);
+    toggle.setAttribute("aria-pressed", String(on));
+    const label = on ? "Switch to day" : "Switch to night";
+    toggle.setAttribute("aria-label", label); toggle.title = label;
+    if (themeMeta) themeMeta.content = on ? "#08122B" : "#3BB4EA";
+    if (!animate) { void root.offsetWidth; requestAnimationFrame(() => root.classList.remove("no-anim")); }
+  }
+  let saved = null;
+  try { saved = localStorage.getItem("pf-theme"); } catch (e) {}
+  setNight(saved === "night", false);
+  toggle.addEventListener("click", () => {
+    const on = !root.classList.contains("night");
+    setNight(on, true);
+    try { localStorage.setItem("pf-theme", on ? "night" : "day"); } catch (e) {}
+  });
+
   // Bubbles (visible once the sea covers the screen)
   const bubbles = document.querySelector(".bubbles");
   for (let i = 0; i < 14; i++) {
@@ -476,6 +587,7 @@
     const rise = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.75)));
     root.style.setProperty("--rise", rise.toFixed(3));
     cue.style.opacity = rise > 0.15 ? 0 : 1;
+    toggle.inert = rise > 0.6; // the sea covers the sun/moon once you scroll down
     ticking = false;
   };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
