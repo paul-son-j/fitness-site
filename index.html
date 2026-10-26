@@ -620,45 +620,6 @@
   addEventListener("resize", onScroll);
   onScroll();
 
-  // Fish dart away from the cursor (or a finger on touch screens)
-  if (!calm) {
-    const fish = [...document.querySelectorAll(".fish")].map((el) => ({ el, ox: 0, oy: 0, tx: 0, ty: 0 }));
-    const R = 170;                   // how close the pointer gets before a fish reacts
-    let px = -9999, py = -9999, running = false;
-    const fishVisible = () => Number(getComputedStyle(root).getPropertyValue("--rise")) > 0.4;
-
-    function aim() {
-      fish.forEach((f) => {
-        const r = f.el.getBoundingClientRect();
-        const cx = r.left + r.width / 2 - f.ox, cy = r.top + r.height / 2 - f.oy;   // where it would be without dodging
-        const dx = cx - px, dy = cy - py, d = Math.hypot(dx, dy) || 1;
-        if (d < R) {
-          const push = (R - d) * 1.4;  // closer = bigger dodge
-          f.tx = (dx / d) * push; f.ty = (dy / d) * push;
-        } else { f.tx = 0; f.ty = 0; }
-      });
-    }
-    function tick() {
-      aim();
-      let moving = false;
-      fish.forEach((f) => {
-        const k = f.tx || f.ty ? 0.22 : 0.04;  // dart away fast, drift back slowly
-        f.ox += (f.tx - f.ox) * k; f.oy += (f.ty - f.oy) * k;
-        if (Math.abs(f.ox) < 0.3 && Math.abs(f.oy) < 0.3 && !f.tx && !f.ty) { f.ox = 0; f.oy = 0; }
-        else moving = true;
-        f.el.style.translate = `${f.ox.toFixed(1)}px ${f.oy.toFixed(1)}px`;
-      });
-      if (moving || (px > -9999 && fishVisible())) requestAnimationFrame(tick); else running = false;
-    }
-    const wake = () => { if (!running) { running = true; requestAnimationFrame(tick); } };
-    addEventListener("pointermove", (e) => { if (!fishVisible()) return; px = e.clientX; py = e.clientY; wake(); }, { passive: true });
-    addEventListener("pointerdown", (e) => { if (!fishVisible()) return; px = e.clientX; py = e.clientY; wake(); }, { passive: true });
-    const away = () => { px = -9999; py = -9999; };
-    addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") away(); });
-    document.addEventListener("pointerleave", away);
-    addEventListener("blur", away);
-  }
-
   // Card tilts toward the pointer on desktop
   const card = document.querySelector(".hero .card");
   if (!calm && matchMedia("(pointer: fine)").matches) {
