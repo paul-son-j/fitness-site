@@ -60,6 +60,19 @@
       "sleep_h": 7,
       "mood": "A bit happy",
       "mood_score": 4
+    },
+    "2026-10-24": {
+      "status": "rest",
+      "cardio": [
+        {
+          "type": "Walk",
+          "min": 30
+        }
+      ],
+      "sleep_h": 4,
+      "mood": "A bit happy",
+      "mood_score": 4,
+      "note": "No workout today, just a 30-minute walk."
     }
   }
 }
