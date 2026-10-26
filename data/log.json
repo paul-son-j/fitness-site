@@ -73,6 +73,23 @@
       "mood": "A bit happy",
       "mood_score": 4,
       "note": "No workout today, just a 30-minute walk."
+    },
+    "2026-10-25": {
+      "status": "rest",
+      "cardio": [
+        {
+          "type": "Jog",
+          "min": 15
+        },
+        {
+          "type": "Cardio",
+          "min": 15
+        }
+      ],
+      "sleep_h": 10,
+      "mood": "Quite a bit happy",
+      "mood_score": 5,
+      "note": "No workout today. A 15-minute jog and 15 minutes of cardio; rested most of the day."
     }
   }
 }
