@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-27T06:59:00+05:30",
+  "updated_at": "2026-10-27T21:37:00+05:30",
   "days": {
     "2026-10-23": {
       "status": "workout",
@@ -211,10 +211,120 @@
       "note": "Back and chest session focused on strength, mainly upper chest and upper back, finished with core work for the obliques."
     },
     "2026-10-27": {
+      "status": "workout",
+      "focus": "Legs: quad strength",
+      "exercises": [
+        {
+          "name": "Leg stretches (warm-up)",
+          "sets": []
+        },
+        {
+          "name": "Leg extension",
+          "sets": [
+            {
+              "reps": 8,
+              "kg": 45
+            },
+            {
+              "reps": 8,
+              "kg": 45
+            },
+            {
+              "reps": 8,
+              "kg": 45
+            },
+            {
+              "reps": 8,
+              "kg": 45
+            },
+            {
+              "reps": 8,
+              "kg": 45
+            }
+          ]
+        },
+        {
+          "name": "Lunges",
+          "sets": [
+            {},
+            {},
+            {},
+            {}
+          ],
+          "note": "7.5 kg dumbbell in each hand."
+        },
+        {
+          "name": "Partial squat (bench support)",
+          "sets": [
+            {
+              "reps": 12,
+              "kg": 40
+            },
+            {
+              "reps": 12,
+              "kg": 40
+            },
+            {
+              "reps": 12,
+              "kg": 40
+            },
+            {
+              "reps": 12,
+              "kg": 40
+            }
+          ],
+          "note": "40 kg barbell."
+        },
+        {
+          "name": "Calf raises",
+          "sets": [
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "name": "Jump squat",
+          "sets": [
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "name": "Cable crunches",
+          "sets": [
+            {
+              "reps": 15
+            },
+            {
+              "reps": 15
+            },
+            {
+              "reps": 15
+            },
+            {
+              "reps": 15
+            }
+          ]
+        }
+      ],
       "sleep_h": 7,
       "mood": "Quite normal",
       "mood_score": 3,
-      "note": "Body pain in my upper back today."
+      "note": "Leg day focused on strengthening my quads. Body pain in my upper back today."
     }
   }
 }
