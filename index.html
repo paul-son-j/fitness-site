@@ -723,6 +723,7 @@
     const badge = document.getElementById("dp-badge");
     badge.className = "badge " + (e.status || "");
     badge.textContent = e.status === "rest" ? "Rest day" : "Workout";
+    badge.hidden = !e.status; // not marked as workout or rest yet
     document.getElementById("dp-date").textContent = dt.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" });
     const focus = document.getElementById("dp-focus");
     focus.textContent = e.focus ? `Focus: ${e.focus}` : "";
