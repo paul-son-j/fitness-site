@@ -118,6 +118,42 @@
   html.night .mood-chart text[fill="#2B8A57"] { fill: #74E3A8; }
   html.night .mood-chart polyline { stroke: var(--text); }
   html.night .mood-chart line[stroke="#2B1B0E"] { stroke: #FFFFFF; }
+  /* ---------- Muscle map ---------- */
+  :root { --body:#F2E3C0; --mus0:#FBF4E2; --mus1:#B9EBCF; --mus2:#62CF97; --mus3:#21A363; }
+  html.night { --body:#2F3E66; --mus0:#43557F; }
+  .muscles { margin-top: 26px; padding-top: 20px; border-top: 3px dashed var(--paper-edge); }
+  .mus-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+  .mus-head h3 { margin: 0; font: 400 1.7rem/1 "Bangers", "Impact", sans-serif; letter-spacing: .04em; }
+  .mus-week { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 10px 0 6px; }
+  .mus-week span { font-weight: 800; color: var(--muted); font-size: .95rem; text-align: center; }
+  .mus-week button { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--ink); background: var(--straw);
+                     box-shadow: 2px 2px 0 var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; flex: none; }
+  .mus-week button svg { width: 15px; height: 15px; }
+  .mus-week button:disabled { opacity: .3; cursor: default; }
+  .mus-week button:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+  .bodies { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-width: 380px; margin: 0 auto; }
+  .bodies figure { margin: 0; text-align: center; }
+  .bodies figcaption { font-size: .8rem; font-weight: 800; color: var(--muted); margin-top: 2px; }
+  .bodies svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .bodies .sil { fill: var(--body); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; transition: fill .9s; }
+  .bodies .mus { stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; cursor: pointer; transition: fill .5s, opacity .2s; }
+  .bodies .mus.l0 { fill: var(--mus0); }
+  .bodies .mus.l1 { fill: var(--mus1); }
+  .bodies .mus.l2 { fill: var(--mus2); }
+  .bodies .mus.l3 { fill: var(--mus3); }
+  .bodies .mus:hover { opacity: .8; }
+  .bodies .mus.sel { stroke: var(--red); stroke-width: 4; }
+  .bodies .mus:focus { outline: none; }
+  .bodies .mus:focus-visible { outline: none; stroke: var(--red); stroke-width: 4; }
+  .bodies .abs-line { stroke: var(--ink); stroke-width: 1.6; opacity: .45; pointer-events: none; }
+  .mus-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; margin: 12px 0 0; font-size: .85rem; font-weight: 800; color: var(--muted); }
+  .mus-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .mus-legend i { width: 15px; height: 15px; border-radius: 4px; border: 2px solid var(--ink); }
+  .mus-info { margin: 14px 0 0; padding: 10px 12px; background: var(--surface); border: 3px solid var(--ink); border-radius: 10px; font-weight: 700; color: var(--text); font-size: .95rem; }
+  .mus-info b { font-weight: 800; }
+  .mus-info ul { margin: 6px 0 0; padding-left: 18px; }
+  .mus-gaps { margin: 10px 0 0; font-weight: 800; color: var(--muted); font-size: .92rem; }
+
   /* Let taps on empty space reach the sun/moon behind the sections */
   .hero, .tracker { pointer-events: none; }
   .hero > *, .tracker > * { pointer-events: auto; }
@@ -504,6 +540,69 @@
     </div>
     <p class="tap-hint" id="tap-hint" hidden>Tap a colored day to see what was done.</p>
     <p class="empty-note" id="empty-note" hidden>No days logged yet. Each day gets colored here as it's logged.</p>
+
+    <div class="muscles" aria-labelledby="mus-title">
+      <div class="mus-head"><h3 id="mus-title">Muscles worked</h3></div>
+      <div class="mus-week">
+        <button type="button" id="mus-prev" aria-label="Previous week"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span id="mus-week-label" aria-live="polite"></span>
+        <button type="button" id="mus-next" aria-label="Next week"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="bodies" id="bodies">
+        <figure><svg viewBox="30 8 140 382" role="group" aria-label="Front of body">
+      <g class="sil-group">
+        <circle class="sil" cx="100" cy="34" r="20"/>
+        <rect class="sil" x="91" y="50" width="18" height="16" rx="4"/>
+        <rect class="sil" x="44" y="86" width="22" height="72" rx="11"/><rect class="sil" x="134" y="86" width="22" height="72" rx="11"/>
+        <rect class="sil" x="40" y="150" width="20" height="62" rx="10"/><rect class="sil" x="140" y="150" width="20" height="62" rx="10"/>
+        <circle class="sil" cx="50" cy="220" r="9"/><circle class="sil" cx="150" cy="220" r="9"/>
+        <rect class="sil" x="68" y="206" width="31" height="92" rx="14"/><rect class="sil" x="101" y="206" width="31" height="92" rx="14"/>
+        <rect class="sil" x="72" y="292" width="24" height="80" rx="11"/><rect class="sil" x="104" y="292" width="24" height="80" rx="11"/>
+        <ellipse class="sil" cx="82" cy="378" rx="14" ry="7"/><ellipse class="sil" cx="118" cy="378" rx="14" ry="7"/>
+        <path class="sil" d="M64 78 Q100 66 136 78 Q146 92 142 108 Q134 150 128 188 Q132 210 124 226 L76 226 Q68 210 72 188 Q66 150 58 108 Q54 92 64 78 Z"/>
+      </g>
+      <ellipse data-m="shoulders" cx="62" cy="92" rx="13" ry="12"/><ellipse data-m="shoulders" cx="138" cy="92" rx="13" ry="12"/>
+      <rect data-m="chest" x="72" y="84" width="27" height="30" rx="10"/><rect data-m="chest" x="101" y="84" width="27" height="30" rx="10"/>
+      <ellipse data-m="biceps" cx="55" cy="124" rx="8" ry="21"/><ellipse data-m="biceps" cx="145" cy="124" rx="8" ry="21"/>
+      <ellipse data-m="forearms" cx="50" cy="180" rx="8" ry="24"/><ellipse data-m="forearms" cx="150" cy="180" rx="8" ry="24"/>
+      <ellipse data-m="obliques" cx="76" cy="150" rx="7" ry="24"/><ellipse data-m="obliques" cx="124" cy="150" rx="7" ry="24"/>
+      <rect data-m="abs" x="86" y="118" width="28" height="62" rx="8"/>
+      <path class="abs-line" d="M100 120 V178 M88 139 H112 M88 159 H112"/>
+      <ellipse data-m="quads" cx="84" cy="250" rx="13" ry="38"/><ellipse data-m="quads" cx="116" cy="250" rx="13" ry="38"/>
+      <ellipse data-m="calves" cx="84" cy="330" rx="9" ry="28"/><ellipse data-m="calves" cx="116" cy="330" rx="9" ry="28"/>
+    </svg><figcaption>Front</figcaption></figure>
+        <figure><svg viewBox="30 8 140 382" role="group" aria-label="Back of body">
+      <g class="sil-group">
+        <circle class="sil" cx="100" cy="34" r="20"/>
+        <rect class="sil" x="91" y="50" width="18" height="16" rx="4"/>
+        <rect class="sil" x="44" y="86" width="22" height="72" rx="11"/><rect class="sil" x="134" y="86" width="22" height="72" rx="11"/>
+        <rect class="sil" x="40" y="150" width="20" height="62" rx="10"/><rect class="sil" x="140" y="150" width="20" height="62" rx="10"/>
+        <circle class="sil" cx="50" cy="220" r="9"/><circle class="sil" cx="150" cy="220" r="9"/>
+        <rect class="sil" x="68" y="206" width="31" height="92" rx="14"/><rect class="sil" x="101" y="206" width="31" height="92" rx="14"/>
+        <rect class="sil" x="72" y="292" width="24" height="80" rx="11"/><rect class="sil" x="104" y="292" width="24" height="80" rx="11"/>
+        <ellipse class="sil" cx="82" cy="378" rx="14" ry="7"/><ellipse class="sil" cx="118" cy="378" rx="14" ry="7"/>
+        <path class="sil" d="M64 78 Q100 66 136 78 Q146 92 142 108 Q134 150 128 188 Q132 210 124 226 L76 226 Q68 210 72 188 Q66 150 58 108 Q54 92 64 78 Z"/>
+      </g>
+      <path data-m="upperback" d="M100 70 L128 88 L100 122 L72 88 Z"/>
+      <ellipse data-m="shoulders" cx="62" cy="92" rx="13" ry="12"/><ellipse data-m="shoulders" cx="138" cy="92" rx="13" ry="12"/>
+      <path data-m="lats" d="M97 112 L72 104 Q66 134 84 170 L97 164 Z"/><path data-m="lats" d="M103 112 L128 104 Q134 134 116 170 L103 164 Z"/>
+      <ellipse data-m="triceps" cx="55" cy="124" rx="8" ry="21"/><ellipse data-m="triceps" cx="145" cy="124" rx="8" ry="21"/>
+      <ellipse data-m="forearms" cx="50" cy="180" rx="8" ry="24"/><ellipse data-m="forearms" cx="150" cy="180" rx="8" ry="24"/>
+      <rect data-m="lowerback" x="88" y="166" width="24" height="24" rx="6"/>
+      <ellipse data-m="glutes" cx="87" cy="208" rx="13" ry="14"/><ellipse data-m="glutes" cx="113" cy="208" rx="13" ry="14"/>
+      <ellipse data-m="hamstrings" cx="84" cy="258" rx="13" ry="32"/><ellipse data-m="hamstrings" cx="116" cy="258" rx="13" ry="32"/>
+      <ellipse data-m="calves" cx="84" cy="330" rx="10" ry="28"/><ellipse data-m="calves" cx="116" cy="330" rx="10" ry="28"/>
+    </svg><figcaption>Back</figcaption></figure>
+      </div>
+      <div class="mus-legend">
+        <span><i style="background:var(--mus0)"></i>Not yet</span>
+        <span><i style="background:var(--mus1)"></i>Light</span>
+        <span><i style="background:var(--mus2)"></i>Moderate</span>
+        <span><i style="background:var(--mus3)"></i>Heavy</span>
+      </div>
+      <p class="mus-gaps" id="mus-gaps"></p>
+      <div class="mus-info" id="mus-info" aria-live="polite">Tap a muscle to see which exercises worked it.</div>
+    </div>
   </div>
 </section>
 
@@ -964,6 +1063,111 @@
     if (b) b.focus({ preventScroll: true });
   });
 
+  // ---------- Muscle map ----------
+  const MUSCLE_NAMES = { chest: "Chest", shoulders: "Shoulders", biceps: "Biceps", triceps: "Triceps", forearms: "Forearms",
+    abs: "Abs", obliques: "Obliques", upperback: "Upper back", lats: "Lats", lowerback: "Lower back",
+    glutes: "Glutes", quads: "Quads", hamstrings: "Hamstrings", calves: "Calves" };
+  // Exercise name -> muscles (1 = main muscle, 0.5 = helper). First match wins; an exercise can override with "muscles": [...]
+  const MUSCLE_RULES = [
+    [/stretch|warm.?up|mobility|foam roll/, null],
+    [/leg curl|hamstring curl|nordic/, { hamstrings: 1 }],
+    [/leg extension/, { quads: 1 }],
+    [/romanian|\brdl\b|stiff.?leg/, { hamstrings: 1, glutes: .5, lowerback: .5 }],
+    [/deadlift/, { hamstrings: 1, glutes: 1, lowerback: 1, upperback: .5 }],
+    [/hip thrust|glute bridge/, { glutes: 1, hamstrings: .5 }],
+    [/lunge|split squat|step.?up/, { quads: 1, glutes: 1, hamstrings: .5 }],
+    [/jump squat/, { quads: 1, glutes: .5, calves: .5 }],
+    [/squat|leg press|wall sit/, { quads: 1, glutes: .5 }],
+    [/calf/, { calves: 1 }],
+    [/wall push/, { chest: 1, shoulders: .5, triceps: .5 }],
+    [/incline.*(press|bench)/, { chest: 1, shoulders: .5, triceps: .5 }],
+    [/chest press|bench press|push.?up|\bdips?\b/, { chest: 1, triceps: .5, shoulders: .5 }],
+    [/rear delt|face pull|reverse fly/, { shoulders: 1, upperback: .5 }],
+    [/\bfly\b|flye|pec deck|crossover/, { chest: 1 }],
+    [/shoulder press|overhead press|military|lateral raise|front raise|arnold/, { shoulders: 1, triceps: .5 }],
+    [/pull.?up|chin.?up|pull.?down/, { lats: 1, biceps: .5, upperback: .5 }],
+    [/\brows?\b/, { upperback: 1, lats: .5, biceps: .5 }],
+    [/shrug/, { upperback: 1 }],
+    [/dead hang|\bhang\b/, { forearms: 1, lats: .5 }],
+    [/farmer|wrist|grip/, { forearms: 1 }],
+    [/curl/, { biceps: 1, forearms: .5 }],
+    [/tricep|push.?down|skull|kickback/, { triceps: 1 }],
+    [/back extension|hyperextension|superman/, { lowerback: 1, glutes: .5 }],
+    [/oblique|landmine|russian twist|side plank|woodchop/, { obliques: 1 }],
+    [/crunch|sit.?up|plank|leg raise|hollow|\babs?\b/, { abs: 1 }],
+  ];
+  function musclesFor(ex) {
+    if (Array.isArray(ex.muscles)) return Object.fromEntries(ex.muscles.map((m) => [m, 1]));
+    const name = String(ex.name || "").toLowerCase();
+    for (const [re, map] of MUSCLE_RULES) if (re.test(name)) return map || {};
+    return {};
+  }
+
+  const musPanel = document.getElementById("bodies");
+  const mondayOf = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+  let musWeek = mondayOf(today), firstWeek = mondayOf(today), musData = {}, musSel = null;
+
+  function renderMuscles() {
+    const end = new Date(musWeek); end.setDate(end.getDate() + 6);
+    const fmt = (d) => d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    const isThis = +musWeek === +mondayOf(today);
+    document.getElementById("mus-week-label").textContent = `${isThis ? "This week · " : ""}${fmt(musWeek)} – ${fmt(end)}`;
+    document.getElementById("mus-prev").disabled = musWeek <= firstWeek;
+    document.getElementById("mus-next").disabled = isThis;
+
+    // Tally sets per muscle for the week
+    musData = {};
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(musWeek); d.setDate(d.getDate() + i);
+      const e = entryOf(iso(d));
+      if (!e) continue;
+      const day = d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric" });
+      (e.exercises || []).forEach((ex) => {
+        const sets = (ex.sets && ex.sets.length) || 1;
+        Object.entries(musclesFor(ex)).forEach(([m, w]) => {
+          const t = musData[m] || (musData[m] = { sets: 0, items: [] });
+          t.sets += sets * w;
+          t.items.push(`${day}: ${ex.name}${w < 1 ? " (helper)" : ""}`);
+        });
+      });
+    }
+    musPanel.querySelectorAll("[data-m]").forEach((el) => {
+      const t = musData[el.dataset.m], v = t ? t.sets : 0;
+      const lvl = v === 0 ? 0 : v < 4 ? 1 : v < 10 ? 2 : 3;
+      el.setAttribute("class", `mus l${lvl}${el.dataset.m === musSel ? " sel" : ""}`);
+      el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", `${MUSCLE_NAMES[el.dataset.m]}: ${v ? ["", "light", "moderate", "heavy"][lvl] + `, about ${Math.round(v)} sets` : "not trained"}`);
+    });
+    const gaps = Object.keys(MUSCLE_NAMES).filter((m) => !musData[m]).map((m) => MUSCLE_NAMES[m]);
+    document.getElementById("mus-gaps").textContent = gaps.length
+      ? `Not trained ${isThis ? "yet this week" : "that week"}: ${gaps.join(", ")}.`
+      : `Every muscle group got some work ${isThis ? "this week" : "that week"}.`;
+    showMuscle(musSel);
+  }
+
+  function showMuscle(m) {
+    const info = document.getElementById("mus-info");
+    if (!m) { info.textContent = "Tap a muscle to see which exercises worked it."; return; }
+    const t = musData[m];
+    info.innerHTML = t
+      ? `<b>${MUSCLE_NAMES[m]}</b> · about ${Math.round(t.sets)} sets<ul>${[...new Set(t.items)].map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
+      : `<b>${MUSCLE_NAMES[m]}</b> · not trained ${+musWeek === +mondayOf(today) ? "yet this week" : "that week"}.`;
+  }
+
+  function pickMuscle(el) {
+    musSel = musSel === el.dataset.m ? null : el.dataset.m;
+    musPanel.querySelectorAll("[data-m]").forEach((x) => x.classList.toggle("sel", x.dataset.m === musSel));
+    showMuscle(musSel);
+  }
+  musPanel.addEventListener("click", (ev) => { const el = ev.target.closest("[data-m]"); if (el) pickMuscle(el); });
+  musPanel.addEventListener("keydown", (ev) => {
+    const el = ev.target.closest("[data-m]");
+    if (el && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); pickMuscle(el); }
+  });
+  document.getElementById("mus-prev").addEventListener("click", () => { musWeek.setDate(musWeek.getDate() - 7); renderMuscles(); });
+  document.getElementById("mus-next").addEventListener("click", () => { musWeek.setDate(musWeek.getDate() + 7); renderMuscles(); });
+
   document.getElementById("prev").addEventListener("click", () => { view.setMonth(view.getMonth() - 1); render(); });
   document.getElementById("next").addEventListener("click", () => { view.setMonth(view.getMonth() + 1); render(); });
 
@@ -993,6 +1197,8 @@
       document.getElementById("empty-note").hidden = dates.length > 0;
       document.getElementById("tap-hint").hidden = dates.length === 0;
       document.getElementById("s-streak").textContent = streak();
+      if (dates.length) { const [wy, wm, wd] = dates[0].split("-").map(Number); firstWeek = mondayOf(new Date(wy, wm - 1, wd)); }
+      renderMuscles();
       render();
       // Shared link straight to a day, e.g. #day-2026-10-23
       const mm = location.hash.match(/^#(mood|sleep)-(\d{4})-(\d{2})$/);
