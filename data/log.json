@@ -324,7 +324,13 @@
       "sleep_h": 7,
       "mood": "Quite normal",
       "mood_score": 3,
-      "note": "Leg day focused on strengthening my quads. Body pain in my upper back today."
+      "note": "Leg day focused on strengthening my quads.",
+      "pain": [
+        {
+          "area": "upper back",
+          "type": "pain"
+        }
+      ]
     }
   }
 }
