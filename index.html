@@ -315,6 +315,36 @@
   .day.rest { background: var(--rest); color: #fff; border: 3px solid var(--ink); }
   .day.today { box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--red); }
   .day.fill { animation: pop .4s cubic-bezier(.3,1.7,.5,1) both; }
+  .day { position: relative; }
+  .day.pain::after { content: ""; position: absolute; top: -4px; right: -4px; width: 12px; height: 12px; border-radius: 50%;
+                     background: var(--hurt); border: 2.5px solid var(--ink); }
+  :root { --hurt:#E5383B; --lvl1:#F6B26B; --lvl2:#EE7B3A; --lvl3:#D7263D; }
+
+  /* ---------- Pain & soreness ---------- */
+  .pain-card h2 { font-size: clamp(2.2rem, 8vw, 3rem); line-height: 1; margin: 0 0 8px; text-shadow: 4px 4px 0 var(--ink); }
+  .pain-sub { margin: 0 0 16px; font-weight: 700; color: var(--muted); }
+  .pain-list { display: grid; gap: 12px; }
+  .pain-ep { display: block; width: 100%; text-align: left; font: inherit; color: var(--text); cursor: pointer;
+             background: var(--surface); border: 3px solid var(--ink); border-radius: 12px; padding: 12px 14px; box-shadow: 3px 3px 0 var(--ink); }
+  .pain-ep:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .pe-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .pe-top b { font-size: 1.1rem; font-weight: 800; }
+  .pe-tag { font-size: .78rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; padding: 3px 9px; color: #fff; background: var(--hurt); white-space: nowrap; }
+  .pe-tag.sore { background: var(--lvl1); color: #2B1B0E; }
+  .pe-meta { margin-top: 4px; font-size: .9rem; font-weight: 800; color: var(--muted); }
+  .pe-meta .live { color: var(--hurt); }
+  .pe-days { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .pe-days i { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--ink); background: var(--empty); }
+  .pe-days i.l1 { background: var(--lvl1); } .pe-days i.l2 { background: var(--lvl2); } .pe-days i.l3 { background: var(--lvl3); }
+  .pe-days i.l0 { background: repeating-linear-gradient(45deg, var(--lvl1) 0 4px, var(--surface) 4px 8px); }
+  .pe-trig { margin-top: 10px; font-size: .9rem; font-weight: 700; color: var(--text); }
+  .pe-trig span { color: var(--muted); font-weight: 800; }
+  .pain-key { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 14px 0 0; font-size: .85rem; font-weight: 800; color: var(--muted); }
+  .pain-key span { display: inline-flex; align-items: center; gap: 6px; }
+  .pain-key i { width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--ink); }
+  .pain-empty { margin: 0; font-weight: 800; color: var(--muted); }
+  .legend .lp { background: var(--hurt); border-radius: 50%; }
+  .dp-list .pain-what { color: var(--hurt); }
 
   .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 18px 0 0; font-size: .9rem; font-weight: 800; color: var(--muted); }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
@@ -538,6 +568,7 @@
       <span><i class="lw"></i>Workout</span>
       <span><i class="lr"></i>Rest day</span>
       <span><i class="ln"></i>Not logged</span>
+      <span><i class="lp"></i>Pain or soreness</span>
     </div>
     <p class="tap-hint" id="tap-hint" hidden>Tap a colored day to see what was done.</p>
     <p class="empty-note" id="empty-note" hidden>No days logged yet. Each day gets colored here as it's logged.</p>
@@ -607,6 +638,20 @@
       </div>
       <p class="mus-gaps" id="mus-gaps"></p>
       <div class="mus-info" id="mus-info" aria-live="polite">Tap a muscle to see which exercises worked it.</div>
+  </div>
+</section>
+
+<section class="tracker panel-sec" id="pain" aria-labelledby="pain-title">
+  <div class="card pain-card">
+    <h2 class="comic" id="pain-title">Pain &amp; soreness</h2>
+    <p class="pain-sub">How long each ache lasted, and what was trained just before it started. Tap one to open that day.</p>
+    <div class="pain-list" id="pain-list"></div>
+    <div class="pain-key">
+      <span><i style="background:var(--lvl1)"></i>Mild</span>
+      <span><i style="background:var(--lvl2)"></i>Moderate</span>
+      <span><i style="background:var(--lvl3)"></i>Severe</span>
+      <span><i style="background:repeating-linear-gradient(45deg, var(--lvl1) 0 4px, var(--surface) 4px 8px)"></i>Level not noted</span>
+    </div>
   </div>
 </section>
 
@@ -768,10 +813,11 @@
       const dt = new Date(y, m, day), key = iso(dt), entry = log[key], status = typeof entry === "string" ? entry : entry && entry.status;
       if (status === "workout") w++;
       if (status === "rest") r++;
-      const cls = ["day", status || "", dt > today ? "future" : "", +dt === +today ? "today" : "", status && !animated ? "fill" : ""].join(" ");
-      const label = `${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${status === "workout" ? "workout" : status === "rest" ? "rest day" : dt > today ? "upcoming" : "not logged"}`;
+      const hurt = entry && typeof entry === "object" && Array.isArray(entry.pain) && entry.pain.length > 0;
+      const cls = ["day", status || "", hurt ? "pain" : "", dt > today ? "future" : "", +dt === +today ? "today" : "", status && !animated ? "fill" : ""].join(" ");
+      const label = `${dt.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}: ${status === "workout" ? "workout" : status === "rest" ? "rest day" : dt > today ? "upcoming" : hurt ? "not marked" : "not logged"}${hurt ? ", pain logged" : ""}`;
       const delay = `animation-delay:${(day * 0.02).toFixed(2)}s`;
-      html += status
+      html += status || hurt
         ? `<button type="button" class="${cls}" data-date="${key}" aria-label="${label}. Open details" style="${delay}">${day}</button>`
         : `<span class="${cls}" aria-label="${label}" style="${delay}">${day}</span>`;
     }
@@ -859,6 +905,13 @@
       html += `<div class="dp-section"><h3>Strength</h3><ul class="dp-list">${e.exercises.map((ex) => {
         const s = setsSummary(ex.sets);
         return `<li><span class="name">${esc(ex.name)}</span><span class="what">${esc(s.what)}</span>${s.more ? `<span class="more">${esc(s.more)}</span>` : ""}${ex.note ? `<span class="more">${esc(ex.note)}</span>` : ""}</li>`;
+      }).join("")}</ul></div>`;
+    }
+    if ((e.pain || []).length) {
+      html += `<div class="dp-section"><h3>Pain &amp; soreness</h3><ul class="dp-list">${e.pain.map((pn) => {
+        const ep = painEpisodes().find((x) => x.areaKey === areaKey(pn.area) && x.days.includes(key));
+        const n = ep ? ep.days.indexOf(key) + 1 : 1;
+        return `<li><span class="name">${esc(cap(pn.area))}</span><span class="what pain-what">${esc(painWords(pn))}</span><span class="more">${n === 1 ? "First day" : `Day ${n}`}${ep && ep.days.length > 1 ? ` of ${ep.days.length}` : ""}${pn.note ? " · " + esc(pn.note) : ""}</span></li>`;
       }).join("")}</ul></div>`;
     }
     if (e.note) html += `<div class="dp-section"><h3>Notes</h3><p class="dp-note">${esc(e.note)}</p></div>`;
@@ -1172,6 +1225,91 @@
   document.getElementById("mus-prev").addEventListener("click", () => { musWeek.setDate(musWeek.getDate() - 7); renderMuscles(); });
   document.getElementById("mus-next").addEventListener("click", () => { musWeek.setDate(musWeek.getDate() + 7); renderMuscles(); });
 
+  // ---------- Pain & soreness ----------
+  const LEVELS = { 1: "Mild", 2: "Moderate", 3: "Severe" };
+  const cap = (t) => String(t || "").replace(/^\w/, (c) => c.toUpperCase());
+  const areaKey = (a) => String(a || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const painWords = (pn) => `${pn.type === "soreness" ? "Soreness" : "Pain"}${LEVELS[pn.level] ? " · " + LEVELS[pn.level] : ""}`;
+  // Body area -> muscle groups, used to find the sessions that loaded that area
+  const AREA_MUSCLES = [
+    [/upper back|trap|rhomboid|neck|shoulder blade/, ["upperback", "lats"]],
+    [/lower back/, ["lowerback", "glutes", "hamstrings"]],
+    [/\bback\b/, ["upperback", "lats", "lowerback"]],
+    [/shoulder|delt|rotator/, ["shoulders"]],
+    [/chest|pec/, ["chest"]],
+    [/elbow/, ["biceps", "triceps", "forearms"]],
+    [/wrist|forearm|grip|finger/, ["forearms"]],
+    [/bicep/, ["biceps"]], [/tricep/, ["triceps"]],
+    [/knee|patella|quad/, ["quads"]],
+    [/hamstring/, ["hamstrings"]],
+    [/hip|glute/, ["glutes"]],
+    [/calf|calves|achilles|ankle|shin/, ["calves"]],
+    [/\babs?\b|core|stomach/, ["abs", "obliques"]], [/oblique|side/, ["obliques"]],
+  ];
+  const musclesOfArea = (a) => { for (const [re, ms] of AREA_MUSCLES) if (re.test(areaKey(a))) return ms; return []; };
+  const shiftISO = (k, n) => { const [y, m, d] = k.split("-").map(Number); return iso(new Date(y, m - 1, d + n)); };
+  const shortDay = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }); };
+
+  // An episode = the same area logged on back-to-back days
+  let painCache = null;
+  function painEpisodes() {
+    if (painCache) return painCache;
+    const byArea = {};
+    Object.keys(log).sort().forEach((k) => {
+      const e = entryOf(k);
+      ((e && e.pain) || []).forEach((pn) => { const a = areaKey(pn.area); if (a) (byArea[a] = byArea[a] || []).push({ k, pn }); });
+    });
+    const eps = [];
+    Object.entries(byArea).forEach(([a, list]) => {
+      let cur = null;
+      list.forEach(({ k, pn }) => {
+        if (cur && shiftISO(cur.days[cur.days.length - 1], 1) === k) { cur.days.push(k); cur.levels.push(pn.level || 0); if (pn.type === "pain") cur.type = "pain"; }
+        else { cur = { areaKey: a, area: pn.area, type: pn.type === "soreness" ? "soreness" : "pain", days: [k], levels: [pn.level || 0] }; eps.push(cur); }
+      });
+    });
+    const yesterday = iso(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1));
+    eps.forEach((ep) => { ep.ongoing = ep.days[ep.days.length - 1] >= yesterday; });
+    painCache = eps.sort((x, y) => (y.days[0] > x.days[0] ? 1 : -1));
+    return painCache;
+  }
+
+  function triggersFor(ep) {
+    const ms = musclesOfArea(ep.area);
+    const out = [];
+    [[-1, "Day before"], [0, "Same day"]].forEach(([off, when]) => {
+      const k = shiftISO(ep.days[0], off), e = entryOf(k);
+      if (!e || !(e.exercises || []).length) return;
+      const hits = ms.length ? e.exercises.filter((ex) => Object.keys(musclesFor(ex)).some((m) => ms.includes(m))).map((ex) => ex.name) : [];
+      if (hits.length) out.push(`<span>${when} (${esc(shortDay(k))}):</span> ${esc(hits.join(", "))}`);
+    });
+    if (!out.length) { // nothing that loads this area: fall back to whatever was trained the day before
+      const k = shiftISO(ep.days[0], -1), e = entryOf(k);
+      if (e && (e.exercises || []).length) out.push(`<span>Day before (${esc(shortDay(k))}):</span> ${esc(e.focus || "workout")}`);
+    }
+    return out;
+  }
+
+  function renderPain() {
+    const box = document.getElementById("pain-list");
+    const eps = painEpisodes();
+    if (!eps.length) { box.innerHTML = `<p class="pain-empty">No pain or soreness logged yet.</p>`; return; }
+    box.innerHTML = eps.map((ep, i) => {
+      const n = ep.days.length;
+      const peak = Math.max(...ep.levels);
+      const trig = triggersFor(ep);
+      return `<button type="button" class="pain-ep" data-ep="${i}" aria-label="${esc(cap(ep.area))}: ${ep.type}, ${n} ${n === 1 ? "day" : "days"} from ${esc(shortDay(ep.days[0]))}${ep.ongoing ? ", still going" : ""}. Open day">
+        <div class="pe-top"><b>${esc(cap(ep.area))}</b><span class="pe-tag ${ep.type === "soreness" ? "sore" : ""}">${ep.type === "soreness" ? "Soreness" : "Pain"}${LEVELS[peak] ? " · " + LEVELS[peak] : ""}</span></div>
+        <div class="pe-meta">${esc(shortDay(ep.days[0]))}${n > 1 ? " – " + esc(shortDay(ep.days[n - 1])) : ""} · lasted ${n} ${n === 1 ? "day" : "days"}${ep.ongoing ? ' · <span class="live">still going</span>' : ""}</div>
+        <div class="pe-days" aria-hidden="true">${ep.levels.map((l) => `<i class="l${l}"></i>`).join("")}</div>
+        ${trig.length ? `<div class="pe-trig">${trig.join("<br>")}</div>` : ""}
+      </button>`;
+    }).join("");
+  }
+  document.getElementById("pain-list").addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-ep]");
+    if (b) openDay(painEpisodes()[+b.dataset.ep].days[0]);
+  });
+
   document.getElementById("prev").addEventListener("click", () => { view.setMonth(view.getMonth() - 1); render(); });
   document.getElementById("next").addEventListener("click", () => { view.setMonth(view.getMonth() + 1); render(); });
 
@@ -1203,6 +1341,7 @@
       document.getElementById("s-streak").textContent = streak();
       if (dates.length) { const [wy, wm, wd] = dates[0].split("-").map(Number); firstWeek = mondayOf(new Date(wy, wm - 1, wd)); }
       renderMuscles();
+      renderPain();
       render();
       // Shared link straight to a day, e.g. #day-2026-10-23
       const mm = location.hash.match(/^#(mood|sleep)-(\d{4})-(\d{2})$/);
