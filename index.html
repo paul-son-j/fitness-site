@@ -323,22 +323,40 @@
   /* ---------- Pain & soreness ---------- */
   .pain-card h2 { font-size: clamp(2.2rem, 8vw, 3rem); line-height: 1; margin: 0 0 8px; text-shadow: 4px 4px 0 var(--ink); }
   .pain-sub { margin: 0 0 16px; font-weight: 700; color: var(--muted); }
-  .pain-list { display: grid; gap: 12px; }
-  .pain-ep { display: block; width: 100%; text-align: left; font: inherit; color: var(--text); cursor: pointer;
-             background: var(--surface); border: 3px solid var(--ink); border-radius: 12px; padding: 12px 14px; box-shadow: 3px 3px 0 var(--ink); }
-  .pain-ep:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
-  .pe-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .pe-top b { font-size: 1.1rem; font-weight: 800; }
   .pe-tag { font-size: .78rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; padding: 3px 9px; color: #fff; background: var(--hurt); white-space: nowrap; }
   .pe-tag.sore { background: var(--lvl1); color: #2B1B0E; }
-  .pe-meta { margin-top: 4px; font-size: .9rem; font-weight: 800; color: var(--muted); }
-  .pe-meta .live { color: var(--hurt); }
-  .pe-days { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-  .pe-days i { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--ink); background: var(--empty); }
-  .pe-days i.l1 { background: var(--lvl1); } .pe-days i.l2 { background: var(--lvl2); } .pe-days i.l3 { background: var(--lvl3); }
-  .pe-days i.l0 { background: repeating-linear-gradient(45deg, var(--lvl1) 0 4px, var(--surface) 4px 8px); }
-  .pe-trig { margin-top: 10px; font-size: .9rem; font-weight: 700; color: var(--text); }
-  .pe-trig span { color: var(--muted); font-weight: 800; }
+  .pg-range { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 12px; }
+  .pg-range span { font-weight: 800; color: var(--muted); font-size: .95rem; text-align: center; }
+  .pg-range button { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--ink); background: var(--straw);
+                     box-shadow: 2px 2px 0 var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; flex: none; }
+  .pg-range button svg { width: 15px; height: 15px; }
+  .pg-range button:disabled { opacity: .3; cursor: default; }
+  .pg-grid { display: grid; grid-template-columns: 76px repeat(14, minmax(0, 1fr)); gap: 3px; align-items: center; }
+  .pg-h { font-size: .68rem; font-weight: 800; color: var(--muted); text-align: center; line-height: 1.1; }
+  .pg-h.today { color: var(--hurt); }
+  .pg-area { all: unset; box-sizing: border-box; cursor: pointer; padding: 4px 4px 4px 0; border-radius: 6px; min-width: 0; }
+  .pg-area b { display: block; font-size: .85rem; font-weight: 800; color: var(--text); line-height: 1.15; }
+  .pg-area small { display: block; font-size: .68rem; font-weight: 700; color: var(--muted); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pg-area.sel b { color: var(--hurt); }
+  .pg-area:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+  .pg-c { aspect-ratio: 1; border-radius: 4px; background: var(--empty); position: relative; }
+  .pg-c.l0, .pg-c.l1, .pg-c.l2, .pg-c.l3 { border: 2px solid var(--ink); }
+  .pg-c.l1 { background: var(--lvl1); } .pg-c.l2 { background: var(--lvl2); } .pg-c.l3 { background: var(--lvl3); }
+  .pg-c.l0 { background: repeating-linear-gradient(45deg, var(--lvl1) 0 3px, var(--surface) 3px 6px); }
+  .pg-c.trained { box-shadow: inset 0 0 0 2px var(--workout); }
+  .pg-c.trained:not(.l0):not(.l1):not(.l2):not(.l3) { background: transparent; border: 2px dashed var(--workout); }
+  .pg-detail[hidden] { display: none; }
+  .pg-detail { margin-top: 14px; background: var(--surface); border: 3px solid var(--ink); border-radius: 12px; padding: 12px 14px; font-weight: 700; color: var(--text); }
+  .pg-detail .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pg-detail .top b { font-size: 1.05rem; font-weight: 800; }
+  .pg-detail .mus { color: var(--muted); font-size: .88rem; font-weight: 800; margin-top: 2px; }
+  .pg-detail ul { margin: 8px 0 0; padding-left: 18px; font-size: .92rem; }
+  .pg-detail li + li { margin-top: 6px; }
+  .pg-detail .trig { color: var(--muted); font-weight: 800; }
+  .pg-detail .open { margin-top: 10px; font: 800 .9rem/1 "Nunito", sans-serif; color: var(--on-straw); background: var(--straw); border: 3px solid var(--ink);
+                     border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); padding: 8px 12px; cursor: pointer; }
+  .pg-pattern { margin: 12px 0 0; font-weight: 800; color: var(--text); font-size: .92rem; }
+  .pg-pattern span { color: var(--muted); }
   .pain-key { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 14px 0 0; font-size: .85rem; font-weight: 800; color: var(--muted); }
   .pain-key span { display: inline-flex; align-items: center; gap: 6px; }
   .pain-key i { width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--ink); }
@@ -644,13 +662,21 @@
 <section class="tracker panel-sec" id="pain" aria-labelledby="pain-title">
   <div class="card pain-card">
     <h2 class="comic" id="pain-title">Pain &amp; soreness</h2>
-    <p class="pain-sub">How long each ache lasted, and what was trained just before it started. Tap one to open that day.</p>
-    <div class="pain-list" id="pain-list"></div>
+    <p class="pain-sub">One row per sore spot, one square per day. A green outline means the muscles around that spot were trained that day. Tap a row for details.</p>
+    <div class="pg-range">
+      <button type="button" id="pg-prev" aria-label="Earlier two weeks"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <span id="pg-label" aria-live="polite"></span>
+      <button type="button" id="pg-next" aria-label="Later two weeks"><svg viewBox="0 0 24 24" fill="none" stroke="#2B1B0E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="pg-grid" id="pg-grid"></div>
+    <div class="pg-detail" id="pg-detail" hidden></div>
+    <p class="pg-pattern" id="pg-pattern" hidden></p>
     <div class="pain-key">
       <span><i style="background:var(--lvl1)"></i>Mild</span>
       <span><i style="background:var(--lvl2)"></i>Moderate</span>
       <span><i style="background:var(--lvl3)"></i>Severe</span>
       <span><i style="background:repeating-linear-gradient(45deg, var(--lvl1) 0 4px, var(--surface) 4px 8px)"></i>Level not noted</span>
+      <span><i style="background:transparent;border:2px dashed var(--workout)"></i>Muscles trained</span>
     </div>
   </div>
 </section>
@@ -1289,26 +1315,86 @@
     return out;
   }
 
+  // Grid: rows = sore areas seen in the window, columns = 14 days
+  let pgEnd = iso(today), pgSel = null;
+  const trainedArea = (k, area) => {
+    const e = entryOf(k), ms = musclesOfArea(area);
+    if (!e || !ms.length) return [];
+    return (e.exercises || []).filter((ex) => Object.keys(musclesFor(ex)).some((m) => ms.includes(m))).map((ex) => ex.name);
+  };
+  const painOn = (k, a) => { const e = entryOf(k); return ((e && e.pain) || []).find((pn) => areaKey(pn.area) === a); };
+
   function renderPain() {
-    const box = document.getElementById("pain-list");
-    const eps = painEpisodes();
-    if (!eps.length) { box.innerHTML = `<p class="pain-empty">No pain or soreness logged yet.</p>`; return; }
-    box.innerHTML = eps.map((ep, i) => {
-      const n = ep.days.length;
-      const peak = Math.max(...ep.levels);
-      const trig = triggersFor(ep);
-      return `<button type="button" class="pain-ep" data-ep="${i}" aria-label="${esc(cap(ep.area))}: ${ep.type}, ${n} ${n === 1 ? "day" : "days"} from ${esc(shortDay(ep.days[0]))}${ep.ongoing ? ", still going" : ""}. Open day">
-        <div class="pe-top"><b>${esc(cap(ep.area))}</b><span class="pe-tag ${ep.type === "soreness" ? "sore" : ""}">${ep.type === "soreness" ? "Soreness" : "Pain"}${LEVELS[peak] ? " · " + LEVELS[peak] : ""}</span></div>
-        <div class="pe-meta">${esc(shortDay(ep.days[0]))}${n > 1 ? " – " + esc(shortDay(ep.days[n - 1])) : ""} · lasted ${n} ${n === 1 ? "day" : "days"}${ep.ongoing ? ' · <span class="live">still going</span>' : ""}</div>
-        <div class="pe-days" aria-hidden="true">${ep.levels.map((l) => `<i class="l${l}"></i>`).join("")}</div>
-        ${trig.length ? `<div class="pe-trig">${trig.join("<br>")}</div>` : ""}
-      </button>`;
+    const days = Array.from({ length: 14 }, (_, i) => shiftISO(pgEnd, i - 13));
+    const first = Object.keys(log).sort()[0];
+    document.getElementById("pg-label").textContent = `${shortDay(days[0])} – ${shortDay(days[13])}`;
+    document.getElementById("pg-prev").disabled = !first || days[0] <= first;
+    document.getElementById("pg-next").disabled = pgEnd >= iso(today);
+
+    const areas = [];
+    painEpisodes().forEach((ep) => { if (ep.days.some((k) => k >= days[0] && k <= days[13]) && !areas.some((a) => a.key === ep.areaKey)) areas.push({ key: ep.areaKey, name: ep.area }); });
+    const grid = document.getElementById("pg-grid");
+    if (!areas.length) {
+      grid.innerHTML = `<p class="pain-empty" style="grid-column:1/-1">No pain or soreness in these two weeks.</p>`;
+      document.getElementById("pg-detail").hidden = true; document.getElementById("pg-pattern").hidden = true; return;
+    }
+    if (!areas.some((a) => a.key === pgSel)) pgSel = areas[0].key;
+
+    let html = `<span></span>` + days.map((k, i) => {
+      const d = +k.slice(8); const show = i % 2 === 1 || k === iso(today) || d === 1;
+      return `<span class="pg-h ${k === iso(today) ? "today" : ""}" aria-hidden="true">${show ? d : ""}</span>`;
     }).join("");
+    areas.forEach((a) => {
+      const ms = musclesOfArea(a.name).map((m) => MUSCLE_NAMES[m].toLowerCase());
+      html += `<button type="button" class="pg-area ${a.key === pgSel ? "sel" : ""}" data-area="${esc(a.key)}" aria-pressed="${a.key === pgSel}">
+        <b>${esc(cap(a.name))}</b>${ms.length ? `<small>${esc(ms.join(", "))}</small>` : ""}</button>`;
+      days.forEach((k) => {
+        const pn = painOn(k, a.key), tr = trainedArea(k, a.name);
+        const cls = ["pg-c", pn ? `l${pn.level || 0}` : "", tr.length ? "trained" : ""].join(" ");
+        const tip = `${shortDay(k)}: ${pn ? painWords(pn) : "no pain"}${tr.length ? " · trained " + tr.join(", ") : ""}`;
+        html += `<i class="${cls}" title="${esc(tip)}" aria-label="${esc(tip)}"></i>`;
+      });
+    });
+    grid.innerHTML = html;
+    renderPainDetail(pgSel);
   }
-  document.getElementById("pain-list").addEventListener("click", (ev) => {
-    const b = ev.target.closest("[data-ep]");
-    if (b) openDay(painEpisodes()[+b.dataset.ep].days[0]);
+
+  function renderPainDetail(a) {
+    const eps = painEpisodes().filter((ep) => ep.areaKey === a).sort((x, y) => (x.days[0] < y.days[0] ? 1 : -1));
+    const box = document.getElementById("pg-detail");
+    if (!eps.length) { box.hidden = true; return; }
+    box.hidden = false;
+    const name = eps[0].area, ms = musclesOfArea(name).map((m) => MUSCLE_NAMES[m]);
+    const items = eps.slice(0, 4).map((ep) => {
+      const n = ep.days.length, peak = Math.max(...ep.levels), trig = triggersFor(ep);
+      return `<li>${esc(shortDay(ep.days[0]))}${n > 1 ? " – " + esc(shortDay(ep.days[n - 1])) : ""} · ${n} ${n === 1 ? "day" : "days"} · ${ep.type === "soreness" ? "soreness" : "pain"}${LEVELS[peak] ? ", " + LEVELS[peak].toLowerCase() : ""}${ep.ongoing ? ' · <span style="color:var(--hurt)">still going</span>' : ""}
+        ${trig.length ? `<div class="trig">${trig.join("<br>")}</div>` : ""}</li>`;
+    }).join("");
+    const latest = eps[0];
+    document.getElementById("pg-detail").innerHTML = `<div class="top"><b>${esc(cap(name))}</b><span class="pe-tag ${latest.type === "soreness" ? "sore" : ""}">${eps.length} ${eps.length === 1 ? "ache" : "aches"} logged</span></div>
+      ${ms.length ? `<div class="mus">Muscles: ${esc(ms.join(", "))}</div>` : ""}
+      <ul>${items}</ul>
+      <button type="button" class="open" data-open-day="${latest.days[0]}">Open ${esc(shortDay(latest.days[0]))}</button>`;
+
+    // Pattern: of the sessions that trained these muscles, how many were followed by this pain the next day?
+    const pat = document.getElementById("pg-pattern");
+    const sessions = Object.keys(log).filter((k) => trainedArea(k, name).length);
+    const after = sessions.filter((k) => painOn(shiftISO(k, 1), a) || painOn(k, a));
+    if (ms.length && sessions.length && after.length) {
+      pat.innerHTML = `Pattern: <span>${esc(cap(name))} hurt on or the day after ${after.length} of ${sessions.length} ${sessions.length === 1 ? "session" : "sessions"} that trained ${esc(ms.join(" / ").toLowerCase())}.</span>`;
+      pat.hidden = false;
+    } else pat.hidden = true;
+  }
+
+  document.getElementById("pg-grid").addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-area]"); if (!b) return;
+    pgSel = b.dataset.area; renderPain();
   });
+  document.getElementById("pg-detail").addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-open-day]"); if (b) openDay(b.dataset.openDay);
+  });
+  document.getElementById("pg-prev").addEventListener("click", () => { pgEnd = shiftISO(pgEnd, -14); renderPain(); });
+  document.getElementById("pg-next").addEventListener("click", () => { pgEnd = shiftISO(pgEnd, 14); if (pgEnd > iso(today)) pgEnd = iso(today); renderPain(); });
 
   document.getElementById("prev").addEventListener("click", () => { view.setMonth(view.getMonth() - 1); render(); });
   document.getElementById("next").addEventListener("click", () => { view.setMonth(view.getMonth() + 1); render(); });
