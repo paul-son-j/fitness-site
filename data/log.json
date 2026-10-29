@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-27T21:37:00+05:30",
+  "updated_at": "2026-10-29T07:05:00+05:30",
   "days": {
     "2026-10-23": {
       "status": "workout",
@@ -331,6 +331,148 @@
           "type": "pain"
         }
       ]
+    },
+    "2026-10-28": {
+      "status": "workout",
+      "focus": "Shoulders and arms",
+      "cardio": [
+        {
+          "type": "Incline walk (treadmill)",
+          "min": 15
+        }
+      ],
+      "exercises": [
+        {
+          "name": "Clean and press",
+          "sets": [],
+          "note": "100 reps in total with 20 kg.",
+          "muscles": [
+            "shoulders",
+            "triceps",
+            "upperback"
+          ]
+        },
+        {
+          "name": "Rear delt fly",
+          "sets": [
+            {},
+            {},
+            {}
+          ]
+        },
+        {
+          "name": "Close-grip pull-up",
+          "sets": [
+            {
+              "reps": 5
+            },
+            {
+              "reps": 5
+            },
+            {
+              "reps": 5
+            },
+            {
+              "reps": 5
+            },
+            {
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "name": "Hammer curl",
+          "sets": [
+            {
+              "reps": 10,
+              "kg": 12.5
+            },
+            {
+              "reps": 10,
+              "kg": 12.5
+            },
+            {
+              "reps": 10,
+              "kg": 12.5
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "sets": [
+            {
+              "reps": 8
+            },
+            {
+              "reps": 8
+            },
+            {
+              "reps": 8
+            },
+            {
+              "reps": 8
+            },
+            {
+              "reps": 8
+            }
+          ],
+          "muscles": [
+            "triceps",
+            "chest"
+          ]
+        },
+        {
+          "name": "Tricep pushdown",
+          "sets": [
+            {
+              "reps": 15,
+              "kg": 20
+            },
+            {
+              "reps": 15,
+              "kg": 20
+            },
+            {
+              "reps": 15,
+              "kg": 20
+            }
+          ]
+        },
+        {
+          "name": "Hanging oblique crunches",
+          "sets": [
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            },
+            {
+              "reps": 10
+            }
+          ],
+          "note": "10 reps each side."
+        }
+      ],
+      "sleep_h": 7,
+      "mood": "Tired and pretty low, but not a bad day",
+      "mood_score": 2,
+      "pain": [
+        {
+          "area": "quads",
+          "type": "soreness",
+          "level": 2
+        },
+        {
+          "area": "glutes",
+          "type": "soreness",
+          "level": 2
+        }
+      ],
+      "note": "Shoulder and arms day. The upper back pain from yesterday has cleared."
     }
   }
 }
