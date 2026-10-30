@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-29T07:05:00+05:30",
+  "updated_at": "2026-10-30T07:14:00+05:30",
   "days": {
     "2026-10-23": {
       "status": "workout",
@@ -473,6 +473,165 @@
         }
       ],
       "note": "Shoulder and arms day. The upper back pain from yesterday has cleared."
+    },
+    "2026-10-29": {
+      "status": "workout",
+      "focus": "Lower chest and back",
+      "exercises": [
+        {
+          "name": "Decline bench press",
+          "sets": [
+            {
+              "reps": 8,
+              "kg": 60
+            },
+            {
+              "reps": 8,
+              "kg": 60
+            },
+            {
+              "reps": 8,
+              "kg": 60
+            },
+            {
+              "reps": 8,
+              "kg": 60
+            },
+            {
+              "reps": 8,
+              "kg": 60
+            }
+          ],
+          "muscles": [
+            "chest",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Decline dumbbell press",
+          "sets": [
+            {
+              "reps": 12,
+              "kg": 10
+            },
+            {
+              "reps": 12,
+              "kg": 10
+            },
+            {
+              "reps": 12,
+              "kg": 10
+            }
+          ],
+          "note": "10 kg dumbbell in each hand.",
+          "muscles": [
+            "chest",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "sets": [
+            {
+              "reps": 12,
+              "kg": 45
+            },
+            {
+              "reps": 12,
+              "kg": 45
+            },
+            {
+              "reps": 12,
+              "kg": 45
+            }
+          ]
+        },
+        {
+          "name": "Barbell bent-over row",
+          "sets": [
+            {
+              "reps": 10,
+              "kg": 30
+            },
+            {
+              "reps": 10,
+              "kg": 30
+            },
+            {
+              "reps": 10,
+              "kg": 30
+            }
+          ]
+        },
+        {
+          "name": "High-to-low cable fly (lower chest)",
+          "sets": [
+            {
+              "reps": 12,
+              "kg": 6
+            },
+            {
+              "reps": 12,
+              "kg": 6
+            },
+            {
+              "reps": 12,
+              "kg": 6
+            }
+          ],
+          "note": "6 kg on each cable."
+        },
+        {
+          "name": "Cable pullover",
+          "sets": [
+            {
+              "reps": 12,
+              "kg": 22
+            },
+            {
+              "reps": 12,
+              "kg": 22
+            },
+            {
+              "reps": 12,
+              "kg": 22
+            }
+          ],
+          "muscles": [
+            "lats"
+          ]
+        },
+        {
+          "name": "Hanging leg raises",
+          "sets": [
+            {
+              "reps": 15
+            },
+            {
+              "reps": 15
+            },
+            {
+              "reps": 15
+            }
+          ]
+        }
+      ],
+      "sleep_h": 6.5,
+      "mood": "Very low",
+      "mood_score": 2,
+      "pain": [
+        {
+          "area": "quads",
+          "type": "soreness",
+          "level": 1
+        },
+        {
+          "area": "glutes",
+          "type": "soreness",
+          "level": 1
+        }
+      ],
+      "note": "Lower chest and back day. Quad and glute soreness is easing."
     }
   }
 }
